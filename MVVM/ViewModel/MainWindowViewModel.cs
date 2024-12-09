@@ -18,6 +18,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand ShowUserProfileCommand { get; }
         public ICommand ShowLoginCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand TurnOffApp { get; }
+
+        
 
         public OtherViewModel OtherVM { get; set; }
         public AlcoholViewModel AlcoholVM { get; set; }
@@ -61,6 +64,10 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             //ShowUserProfileCommand = new RelayCommand(o => CurrentView = new UserProfileControl(), o => UserLoggedIn);
             //ShowLoginCommand = new RelayCommand(o => CurrentView = new LoginControl(), o => !UserLoggedIn);
             LogoutCommand = new RelayCommand(o => Logout());
+            TurnOffApp = new RelayCommand(o =>
+            {
+                mainWindow.Close();
+            });
         }
 
         private void Logout()

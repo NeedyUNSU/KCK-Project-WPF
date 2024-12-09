@@ -4,11 +4,41 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using KCK_Project_WPF.MVVM.Core;
+using System.Windows.Input;
+using System.Windows;
+using System.ComponentModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
-    public class DrinkViewModel : ObservableObject
+    public class DrinkViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        public ICommand AddDrinkCommand { get; set; }
+        public ICommand UpdateDrinkCommand { get; set; }
+        public ICommand DeleteDrinkCommand { get; set; }
+        public ICommand FilterDrinksByNameCommand { get; set; }
+        public ICommand FilterDrinksByIngredientCommand { get; set; }
+
+        public ICommand BackToMainMenu { get; set; }
+        public ICommand BackToMenu { get; set; }
+
+        private bool[] menuAppear = { true, false, false, false, false, false, false, false, false, false };
+
+        public bool[] MenuAppear
+        {
+            get { return menuAppear; }
+            set { menuAppear = value; OnPropertyChanged(); }
+        }
+
+        private bool userIsModerator = false;
+
+        public bool UserIsModerator
+        {
+            get { return userIsModerator; }
+            set { userIsModerator = value; OnPropertyChanged(); }
+        }
+
+
+
         private const string GlassTypesFile = "glassTypes.txt";
         private List<DrinkModel> _drinksCache;
         private OtherViewModel _otherViewModel; 
@@ -98,9 +128,56 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 ));
             }
 
+            AddDrinkCommand = new RelayCommand(o => {
+                //MessageBox.Show("Simple MessageBox", "Simple MessageBox");
+                DisplayMenuNumber(1);
+            });
+
+            UpdateDrinkCommand = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(2);
+            });
+
+            DeleteDrinkCommand = new RelayCommand(o => 
+            { 
+                DisplayMenuNumber(3);
+            });
+
+            FilterDrinksByNameCommand = new RelayCommand(o => 
+            {
+                DisplayMenuNumber(4);
+            });
+            FilterDrinksByIngredientCommand = new RelayCommand(o => 
+            {
+                DisplayMenuNumber(5);
+            });
+
+            BackToMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+            });
+
+            BackToMainMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                    mainViewModel.CurrentView = null;
+                }
+            });
         }
 
-
+        private void DisplayMenuNumber(int poz = 0)
+        {
+            if (poz >= MenuAppear.Length) return;
+            var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
+            buf[poz] = true;
+            MenuAppear = buf;
+        }
 
         public List<DrinkModel> Load()
         {

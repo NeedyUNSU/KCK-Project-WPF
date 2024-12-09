@@ -19,8 +19,8 @@ namespace KCK_Project_WPF
     {
         public MainWindow()
         {
-            InitializeComponent();
             this.DataContext = new MainWindowViewModel();
+            InitializeComponent();
         }
     }
 }

@@ -4,15 +4,62 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KCK_Project_WPF.MVVM.View"
+             xmlns:viewModel="clr-namespace:KCK_Project_WPF.MVVM.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel Margin="20">
-        <TextBlock Text="Menu Drinków" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-        <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-        <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-        <Button Content="Usuń drinka" Command="{Binding DeleteDrinkCommand}" Margin="5"
+    <StackPanel Background="White">
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[0], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu Drinków 0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+            <Button Content="Usuń drinka" Command="{Binding DeleteDrinkCommand}" Margin="5"
                 Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        <Button Content="Filtruj drinki po nazwie" Command="{Binding FilterDrinksByNameCommand}" Margin="5"/>
-        <Button Content="Filtruj drinki po składniku" Command="{Binding FilterDrinksByIngredientCommand}" Margin="5"/>
+            <Button Content="Filtruj drinki po nazwie" Command="{Binding FilterDrinksByNameCommand}" Margin="5"/>
+            <Button Content="Filtruj drinki po składniku" Command="{Binding FilterDrinksByIngredientCommand}" Margin="5"/>
+            <Button Content="Powrót do menu głównego" Command="{Binding BackToMainMenu}" Margin="5"/>
+        </StackPanel>
+        
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[1], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu chuj Drinków 1" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+            <Button Content="Usuń drinka" Command="{Binding DeleteDrinkCommand}" Margin="5"
+        Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Button Content="Filtruj drinki po nazwie" Command="{Binding FilterDrinksByNameCommand}" Margin="5"/>
+            <Button Content="Filtruj drinki po składniku" Command="{Binding FilterDrinksByIngredientCommand}" Margin="5"/>
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
+        
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[2], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu w chuj Drinków 2" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+            
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
+        
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[3], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu w chuj Drinków 3" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
+
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu w chuj Drinków 4" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
+        
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu w chuj Drinków 5" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
+            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

@@ -9,7 +9,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <DockPanel>
-            <StackPanel DockPanel.Dock="Left" Width="200" Background="LightGray">
+            <StackPanel DockPanel.Dock="Left" Width="200" Background="LightGray" VerticalAlignment="Center">
                 <Button Content="Menu Drinków" Command="{Binding ShowDrinkMenuCommand}" Margin="10"/>
                 <Button Content="Menu Alkoholi" Command="{Binding ShowAlcoholMenuCommand}" Margin="10"/>
                 <Button Content="Menu Składników" Command="{Binding ShowOtherMenuCommand}" Margin="10"/>
@@ -19,9 +19,11 @@
                         Visibility="{Binding UserLoggedIn, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
                 <Button Content="Wyloguj" Command="{Binding LogoutCommand}" Margin="10"
                         Visibility="{Binding UserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Button Content="Wyjdź z aplikacji" Command="{Binding TurnOffApp}" Margin="10"/>
             </StackPanel>
             <!-- Główna przestrzeń na widok -->
-            <ContentPresenter Content="{Binding CurrentView}" />
+            
         </DockPanel>
+        <ContentPresenter Content="{Binding CurrentView}" />
     </Grid>
 </Window>

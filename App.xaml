@@ -8,20 +8,15 @@
     <Application.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-
-        <ResourceDictionary>
-            
+        
+        
         <DataTemplate DataType="{x:Type viewModel:DrinkViewModel}">
             <view:DrinkView/>
         </DataTemplate>
+        
+        <ResourceDictionary x:Key="v">
+            
 
-        <!--<DataTemplate DataType="{x:Type viewModel:ListViewModel}">
-            <view:ListView/>
-        </DataTemplate>-->
-
-        <!--<DataTemplate DataType="{x:Type viewModel:MarbexDbViewModel}">
-            <view:MarbexDbView/>
-        </DataTemplate>-->
 
         </ResourceDictionary>
     </Application.Resources>
