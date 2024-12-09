@@ -1,0 +1,29 @@
+﻿<Application x:Class="KCK_Project_WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:KCK_Project_WPF.MVVM.Core"
+             xmlns:viewModel="clr-namespace:KCK_Project_WPF.MVVM.ViewModel"
+             xmlns:view="clr-namespace:KCK_Project_WPF.MVVM.View"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+
+        <ResourceDictionary>
+            
+        <DataTemplate DataType="{x:Type viewModel:DrinkViewModel}">
+            <view:DrinkView/>
+        </DataTemplate>
+
+        <!--<DataTemplate DataType="{x:Type viewModel:ListViewModel}">
+            <view:ListView/>
+        </DataTemplate>-->
+
+        <!--<DataTemplate DataType="{x:Type viewModel:MarbexDbViewModel}">
+            <view:MarbexDbView/>
+        </DataTemplate>-->
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>
