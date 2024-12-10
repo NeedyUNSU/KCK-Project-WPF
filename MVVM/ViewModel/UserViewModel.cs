@@ -7,13 +7,56 @@ using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using KCK_Project_WPF.MVVM.Model;
 using KCK_Project_WPF.MVVM.Core;
+using System.Windows.Input;
+using System.Windows;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
-    public class UserViewModel
+    public class UserViewModel : BaseViewModel
     {
         private List<UserModel> _users;
         private UserModel CurrentUser = new UserModel("Anonymous", "", "", "", UserType.Anonymous);
+
+        private string loginEmail;
+
+        public string LoginEmail
+        {
+            get { return loginEmail; }
+            set { loginEmail = value; OnPropertyChanged(); }
+        }
+
+        private string loginPasswd;
+
+        public string LoginPassword
+        {
+            get { return loginPasswd; }
+            set { loginPasswd = value; OnPropertyChanged(); }
+        }
+
+
+        public ICommand BackToMainMenu { get; set; }
+        public ICommand BackToMenu { get; set; }
+        public ICommand LoginPage { get; set; }
+        public ICommand RegisterPage { get; set; }
+        public ICommand TryLogin { get; set; }
+        public ICommand ForgotAPassword { get; set; }
+        public ICommand EnterCommand { get; set; }
+
+        private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
+
+        public bool[] MenuAppear
+        {
+            get { return menuAppear; }
+            set { menuAppear = value; OnPropertyChanged(); }
+        }
+
+        private bool userIsModerator = false;
+
+        public bool UserIsModerator
+        {
+            get { return userIsModerator; }
+            set { userIsModerator = value; OnPropertyChanged(); }
+        }
 
 
         public UserViewModel()
@@ -29,8 +72,102 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             {
                 Add(new UserModel($"test{i}", ".\\", $"test{i}@unsu.com", "!QAZ2wsx", UserType.Standard));
             }
+
+            LoginPage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(1);
+            });
+
+            TryLogin = new RelayCommand(o =>
+            {
+                if (string.IsNullOrWhiteSpace(loginEmail) || string.IsNullOrWhiteSpace(loginPasswd))
+                {
+                    MessageBox.Show("Uzupełnij brakujące dane", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!IsGoodEmail(loginEmail))
+                {
+                    MessageBox.Show("Email nie jest w poprawnym formacie spróbuj np. xx@xx.xx", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                //if(!IsGoodPassword(loginPasswd))
+                //{
+                //    MessageBox.Show("Hasło musi zawierać minimalnie jedną dużą literę, jedną małą, znak specjalny oraz cyfrę", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+                //    return;
+                //}
+
+                if(Login(loginEmail, loginPasswd) == 0)
+                {
+                    BackToMainMenu.Execute(this);
+                    loginEmail = "";
+                    loginPasswd = "";
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                    {
+                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                        mainViewModel.UserLoggedIn = true;
+                    }
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Dane nie poprawne spróbuj ponownie.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                MessageBox.Show(loginEmail, loginPasswd);
+            } );
+
+            BackToMenu = new RelayCommand(o =>
+            {
+                if (CurrentUserIsLogged())
+                {
+                    DisplayMenuNumber();
+                }
+                else
+                {
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                    {
+                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                        mainViewModel.CurrentView = null;
+                    }
+                }
+            });
+
+            BackToMainMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                    mainViewModel.CurrentView = null;
+                }
+            });
+
+            //EnterCommand = new RelayCommand(o => 
+            //{ 
+            //    if (MenuAppear[1])
+            //    {
+            //        TryLogin.Execute(this);
+            //    }
+            //});
         }
 
+        private void DisplayMenuNumber(int poz = 0)
+        {
+            if (poz >= MenuAppear.Length) return;
+            var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
+            buf[poz] = true;
+            MenuAppear = buf;
+        }
 
         // load _users from file
         // returned:
@@ -291,7 +428,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public bool IsEmailTaken(string newEmail)
         {
-            if (_users.Where(u => u.Email.ToLower() == newEmail.ToLower()).Count() == 0 && IsGoodEmail(newEmail)) return false; 
+            if (_users.Where(u => u.Email.ToLower() == newEmail.ToLower()).Count() == 0 && IsGoodEmail(newEmail)) return false;
             return true;
         }
 
