@@ -43,7 +43,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             }
         }
 
-        private bool _userLoggedIn = false;
+        private bool _userLoggedIn;
         public bool UserLoggedIn
         {
             get => _userLoggedIn;
@@ -61,6 +61,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             DrinkVM = new DrinkViewModel(OtherVM, AlcoholVM);
             UserVM = new UserViewModel();
 
+            UserLoggedIn = UserVM.CurrentUserIsLogged();
+
             ShowDrinkMenuCommand = new RelayCommand(o => { CurrentView = DrinkVM; });
             ShowLoginCommand = new RelayCommand(o =>
             {
@@ -68,14 +70,21 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 CurrentView = UserVM;
             });
 
+            ShowUserProfileCommand = new RelayCommand(o => 
+            { 
+                UserVM.MenuPage.Execute(this);
+                CurrentView = UserVM;
+            });
+
             //ShowAlcoholMenuCommand = new RelayCommand(o => CurrentView = new AlcoholViewControl());
             //ShowOtherMenuCommand = new RelayCommand(o => CurrentView = new OtherViewControl());
             //ShowUserProfileCommand = new RelayCommand(o => CurrentView = new UserProfileControl(), o => UserLoggedIn);
-            //ShowLoginCommand = new RelayCommand(o => CurrentView = new LoginControl(), o => !UserLoggedIn);
             LogoutCommand = new RelayCommand(o => Logout());
             TurnOffApp = new RelayCommand(o =>
             {
-                mainWindow.Close();
+                var qst = MessageBox.Show("Czy na pewno chcesz zakończyć działanie aplikacji?", "Wyjście z aplikacji", MessageBoxButton.YesNo, MessageBoxImage.Warning); 
+
+                if (qst == MessageBoxResult.Yes) mainWindow.Close();
             });
         }
 
@@ -85,9 +94,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             if (anwser == MessageBoxResult.No) return;
 
-            UserLoggedIn = false;
             UserVM.Logout();
-            //CurrentView = new LoginControl();
+            UserLoggedIn = UserVM.CurrentUserIsLogged();
         }
     }
 }

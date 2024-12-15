@@ -9,6 +9,7 @@ using KCK_Project_WPF.MVVM.Model;
 using KCK_Project_WPF.MVVM.Core;
 using System.Windows.Input;
 using System.Windows;
+using System.Linq;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
@@ -17,6 +18,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private List<UserModel> _users;
         private UserModel CurrentUser = new UserModel("Anonymous", "", "", "", UserType.Anonymous);
 
+        #region Login Page
         private string loginEmail;
 
         public string LoginEmail
@@ -31,16 +33,76 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         {
             get { return loginPasswd; }
             set { loginPasswd = value; OnPropertyChanged(); }
+        } 
+        #endregion
+
+
+        #region Register Page
+        private string registerUserName;
+
+        public string RegisterUserName
+        {
+            get { return registerUserName; }
+            set { registerUserName = value; OnPropertyChanged(); }
         }
+
+        private string registerEmail;
+
+        public string RegisterEmail
+        {
+            get { return registerEmail; }
+            set { registerEmail = value; OnPropertyChanged(); }
+        }
+
+        private string registerPassword;
+
+        public string RegisterPassword
+        {
+            get { return registerPassword; }
+            set { registerPassword = value; OnPropertyChanged(); }
+        }
+
+        private string registerPasswordAgain;
+
+        public string RegisterPasswordAgain
+        {
+            get { return registerPasswordAgain; }
+            set { registerPasswordAgain = value; OnPropertyChanged(); }
+        }
+        #endregion
+
+        #region Main Menu
+
+        public bool UserIsLogged
+        {
+            get { return CurrentUserIsLogged(); }
+        }
+
+        public bool UserIsModerator
+        {
+            get { return CurrentUserIsModerator(); }
+        }
+
+        public bool UserIsAdmin
+        {
+            get { return CurrentUserIsAdministartor(); }
+        }
+
+
+        #endregion
 
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
         public ICommand LoginPage { get; set; }
         public ICommand RegisterPage { get; set; }
+        public ICommand MenuPage { get; set; }
+
+
         public ICommand TryLogin { get; set; }
         public ICommand ForgotAPassword { get; set; }
         public ICommand EnterCommand { get; set; }
+        public ICommand TryRegister { get; set; }
 
         private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
 
@@ -117,8 +179,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     MessageBox.Show("Dane nie poprawne spróbuj ponownie.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
-                MessageBox.Show(loginEmail, loginPasswd);
             } );
 
             BackToMenu = new RelayCommand(o =>
@@ -152,6 +212,80 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
             });
 
+            RegisterPage = new RelayCommand(o => 
+            {
+                loginEmail = "";
+                loginPasswd = "";
+                DisplayMenuNumber(2);
+            });
+
+            TryRegister = new RelayCommand(o => 
+            {
+                List<bool> errors = new List<bool>();
+                List<string> messages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(registerUserName) || string.IsNullOrWhiteSpace(registerEmail) || string.IsNullOrWhiteSpace(registerPassword) || string.IsNullOrWhiteSpace(registerPasswordAgain))
+                {
+                    MessageBox.Show("Uzupełnij brakujące dane", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (IsNameTaken(registerUserName))
+                {
+                    messages.Add("- Nazwa użytkownika jest zajęta");
+                    errors.Add(true);
+                }
+
+                if (!IsGoodEmail(registerEmail))
+                {
+                    messages.Add("- Email nie jest w poprawnym formacie spróbuj np. xx@xx.xx");
+                    errors.Add(true);
+                }
+
+                if (!IsGoodPassword(registerPassword))
+                {
+                    messages.Add("- Hasło musi zawierać minimalnie jedną dużą literę, jedną małą, znak specjalny oraz cyfrę");
+                    errors.Add(true);
+                }
+
+                if (registerPassword != registerPasswordAgain)
+                {
+                    messages.Add("- Hasła nie są takie same");
+                    errors.Add(true);
+                }
+
+                if (errors.Count != 0)
+                {
+                    string output = string.Join('\n', messages);
+
+                    MessageBox.Show(output, "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (Add(new UserModel(RegisterUserName, ".\\", RegisterEmail, RegisterPassword, UserType.Standard)) == 0)
+                {
+                    Login(RegisterEmail, RegisterPassword);
+
+                    MessageBox.Show("Pomyślnie zarejestrowano konto!", "Register", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    DisplayMenuNumber();
+
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                    {
+                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                        mainViewModel.CurrentView = null;
+                        mainViewModel.UserLoggedIn = true;
+                    }
+                }
+
+            });
+
+            MenuPage = new RelayCommand(o => 
+            {
+                DisplayMenuNumber();
+            });
             //EnterCommand = new RelayCommand(o => 
             //{ 
             //    if (MenuAppear[1])

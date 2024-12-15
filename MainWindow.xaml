@@ -22,8 +22,6 @@
                         Visibility="{Binding UserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <Button Content="Wyjdź z aplikacji" Command="{Binding TurnOffApp}" Margin="10"/>
             </StackPanel>
-            <!-- Główna przestrzeń na widok -->
-            
         </DockPanel>
         <ContentPresenter Content="{Binding CurrentView}" />
     </Grid>
