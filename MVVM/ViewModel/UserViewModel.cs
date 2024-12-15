@@ -123,6 +123,10 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand RegisterPage { get; set; }
         public ICommand MenuPage { get; set; }
 
+        public ICommand ShowProfilePage { get; set; }
+        public ICommand ModifyDataPage { get; set; }
+        public ICommand ModeratorMenuPage { get; set; }
+        public ICommand AdministratorMenuPage { get; set; }
 
         public ICommand TryLogin { get; set; }
         public ICommand ForgotAPasswordPage { get; set; }
@@ -131,6 +135,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public ICommand TryForgotPasswordChange { get; set; }
 
+
+
         private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
 
         public bool[] MenuAppear
@@ -138,15 +144,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             get { return menuAppear; }
             set { menuAppear = value; OnPropertyChanged(); }
         }
-
-        //private bool userIsModerator = false;
-
-        //public bool UserIsModerator
-        //{
-        //    get { return userIsModerator; }
-        //    set { userIsModerator = value; OnPropertyChanged(); }
-        //}
-
 
         public UserViewModel()
         {
@@ -174,6 +171,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     if (index > 1 && index <= 3)
                     {
                         DisplayMenuNumber(1);
+                        return;
+                    }
+                    if (index > 3 && index <= 7)
+                    {
+                        DisplayMenuNumber();
                         return;
                     }
 
@@ -213,13 +215,33 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             RegisterPage = new RelayCommand(o =>
             {
                 loginEmail = "";
-                loginPasswd = "";
-                DisplayMenuNumber(2);
+                loginPasswd = "";                                   
+                DisplayMenuNumber(2);                               
+            });                                                     
+                                                                    
+            ForgotAPasswordPage = new RelayCommand(o =>             
+            {                                                       
+                DisplayMenuNumber(3);                               
+            });                                                     
+            
+            ShowProfilePage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(4);
             });
 
-            ForgotAPasswordPage = new RelayCommand(o => 
+            ModifyDataPage = new RelayCommand(o =>
             {
-                DisplayMenuNumber(3);
+                DisplayMenuNumber(5);
+            });
+
+            ModeratorMenuPage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(6);
+            });
+
+            AdministratorMenuPage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(7);
             });
 
             TryLogin = new RelayCommand(o =>
