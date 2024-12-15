@@ -10,11 +10,11 @@
     <Grid Background="White">
         <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding MenuAppear[0], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Menu główne użytkowników 0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Pokaż profil" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Modyfikuj dane użytkownika" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-            <Button Content="Menu moderatora" Command="{Binding DeleteDrinkCommand}" Margin="5"
+            <Button Content="Pokaż profil" Command="{Binding ShowProfilePage}" Margin="5"/>
+            <Button Content="Modyfikuj dane użytkownika" Command="{Binding ModifyDataPage}" Margin="5"/>
+            <Button Content="Menu moderatora" Command="{Binding ModeratorMenuPage}" Margin="5"
              Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="Menu administracji" Command="{Binding FilterDrinksByNameCommand}" Margin="5" 
+            <Button Content="Menu administracji" Command="{Binding AdministratorMenuPage}" Margin="5" 
              Visibility="{Binding UserIsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Button Content="Powrót do menu głównego" Command="{Binding BackToMainMenu}" Margin="5"/>
         </StackPanel>
@@ -46,7 +46,7 @@
                 <Button Content="Register" Command="{Binding RegisterPage}" Margin="5" HorizontalAlignment="Stretch" Width="Auto"/>
                 <Button Content="Zaloguj się" Command="{Binding TryLogin}" Margin="5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.494,0.573"/>
             </UniformGrid>
-            <Button Content="Zapomniałem hasła..." Command="{Binding ForgotAPassword}" HorizontalAlignment="Center" Margin="5"/>
+            <Button Content="Zapomniałem hasła..." Command="{Binding ForgotAPasswordPage}" HorizontalAlignment="Center" Margin="5"/>
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
@@ -98,23 +98,46 @@
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
-        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[3], Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[3], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Zapomniałem hasła 3" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
+                <Label Grid.Column="0" HorizontalAlignment="Right">Email:</Label>
+                <TextBox Grid.Column="1" Text="{Binding ForgotEmail}"/>
+                <Label Grid.Row="1"></Label>
+                <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">Nowe Hasło:</Label>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ForgotPasswordNew}" />
+                <Label Grid.Row="3"></Label>
+                <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right">Powtórz Nowe Hasło:</Label>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ForgotPasswordAgain}" />
+                <Label Grid.Row="5"></Label>
+                <Button Grid.Row="6" Grid.Column="1" Content="Zmień hasło" Command="{Binding TryForgotPasswordChange}" Margin="5" HorizontalAlignment="Stretch" Width="Auto"/>
+            </Grid>
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
+        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Menu w chuj Drinków 4" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
             <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
 
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
+        </StackPanel>-->
 
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
+        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Menu w chuj Drinków 5" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
             <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>

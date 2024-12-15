@@ -36,7 +36,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         } 
         #endregion
 
-
         #region Register Page
         private string registerUserName;
 
@@ -91,6 +90,32 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         #endregion
 
+        #region Forgot A Password
+        private string forgotEmail;
+
+        public string ForgotEmail
+        {
+            get { return forgotEmail; }
+            set { forgotEmail = value; OnPropertyChanged(); }
+        }
+
+        private string forgotPasswordNew;
+
+        public string ForgotPasswordNew
+        {
+            get { return forgotPasswordNew; }
+            set { forgotPasswordNew = value; OnPropertyChanged(); }
+        }
+
+        private string forgotPasswordAgain;
+
+        public string ForgotPasswordAgain
+        {
+            get { return forgotPasswordAgain; }
+            set { forgotPasswordAgain = value; OnPropertyChanged(); }
+        }
+        #endregion
+
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
@@ -100,9 +125,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
 
         public ICommand TryLogin { get; set; }
-        public ICommand ForgotAPassword { get; set; }
+        public ICommand ForgotAPasswordPage { get; set; }
         public ICommand EnterCommand { get; set; }
         public ICommand TryRegister { get; set; }
+
+        public ICommand TryForgotPasswordChange { get; set; }
 
         private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
 
@@ -112,13 +139,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { menuAppear = value; OnPropertyChanged(); }
         }
 
-        private bool userIsModerator = false;
+        //private bool userIsModerator = false;
 
-        public bool UserIsModerator
-        {
-            get { return userIsModerator; }
-            set { userIsModerator = value; OnPropertyChanged(); }
-        }
+        //public bool UserIsModerator
+        //{
+        //    get { return userIsModerator; }
+        //    set { userIsModerator = value; OnPropertyChanged(); }
+        //}
 
 
         public UserViewModel()
@@ -135,9 +162,64 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 Add(new UserModel($"test{i}", ".\\", $"test{i}@unsu.com", "!QAZ2wsx", UserType.Standard));
             }
 
+            BackToMenu = new RelayCommand(o =>
+            {
+                if (CurrentUserIsLogged())
+                {
+                    DisplayMenuNumber();
+                }
+                else
+                {
+                    var index = Array.IndexOf(menuAppear, true);
+                    if (index > 1 && index <= 3)
+                    {
+                        DisplayMenuNumber(1);
+                        return;
+                    }
+
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                    {
+                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                        mainViewModel.CurrentView = null;
+                    }
+                }
+            });
+
+            BackToMainMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                    mainViewModel.CurrentView = null;
+                }
+            });
+
+            MenuPage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+            });
+
             LoginPage = new RelayCommand(o =>
             {
                 DisplayMenuNumber(1);
+            });
+
+            RegisterPage = new RelayCommand(o =>
+            {
+                loginEmail = "";
+                loginPasswd = "";
+                DisplayMenuNumber(2);
+            });
+
+            ForgotAPasswordPage = new RelayCommand(o => 
+            {
+                DisplayMenuNumber(3);
             });
 
             TryLogin = new RelayCommand(o =>
@@ -172,6 +254,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
                         mainViewModel.UserLoggedIn = true;
                     }
+
                     return;
                 }
                 else
@@ -180,44 +263,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     return;
                 }
             } );
-
-            BackToMenu = new RelayCommand(o =>
-            {
-                if (CurrentUserIsLogged())
-                {
-                    DisplayMenuNumber();
-                }
-                else
-                {
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                    {
-                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
-
-                        mainViewModel.CurrentView = null;
-                    }
-                }
-            });
-
-            BackToMainMenu = new RelayCommand(o =>
-            {
-                DisplayMenuNumber();
-
-                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                {
-                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
-
-                    mainViewModel.CurrentView = null;
-                }
-            });
-
-            RegisterPage = new RelayCommand(o => 
-            {
-                loginEmail = "";
-                loginPasswd = "";
-                DisplayMenuNumber(2);
-            });
 
             TryRegister = new RelayCommand(o => 
             {
@@ -282,17 +327,71 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             });
 
-            MenuPage = new RelayCommand(o => 
+            TryForgotPasswordChange = new RelayCommand(o =>
             {
-                DisplayMenuNumber();
+                List<bool> errors = new List<bool>();
+                List<string> messages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(ForgotEmail) || string.IsNullOrWhiteSpace(ForgotPasswordNew) || string.IsNullOrWhiteSpace(ForgotPasswordAgain))
+                {
+                    MessageBox.Show("Uzupełnij brakujące dane", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!IsGoodEmail(ForgotEmail))
+                {
+                    messages.Add("- Email nie jest w poprawnym formacie spróbuj np. xx@xx.xx");
+                    errors.Add(true);
+                }
+                else if (!IsEmailTaken(ForgotEmail))
+                {
+                    messages.Add("- Email nie jest istniejącym emailem w bazie, czy na pewno posiadałeś konto na naszej platformie?");
+                    errors.Add(true);
+                }
+
+                if (!IsGoodPassword(ForgotPasswordNew))
+                {
+                    messages.Add("- Hasło musi zawierać minimalnie jedną dużą literę, jedną małą, znak specjalny oraz cyfrę");
+                    errors.Add(true);
+                }
+
+                if (ForgotPasswordNew != ForgotPasswordAgain)
+                {
+                    messages.Add("- Hasła nie są takie same");
+                    errors.Add(true);
+                }
+
+                if (errors.Count != 0)
+                {
+                    string output = string.Join('\n', messages);
+
+                    MessageBox.Show(output, "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var result = ForgotPassword(ForgotEmail, ForgotPasswordNew);
+
+                if (result == 0)
+                {
+                    MessageBox.Show("Pomyślnie zresetowano hasło!", "Forgot a password", MessageBoxButton.OK, MessageBoxImage.Information);
+                    DisplayMenuNumber(1);
+                }
+                else
+                {
+                    MessageBox.Show("Wystąpił błąd podczas zmiany hasła!", "Forgot a password", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
             });
+
+            
+            /*
             //EnterCommand = new RelayCommand(o => 
             //{ 
             //    if (MenuAppear[1])
             //    {
             //        TryLogin.Execute(this);
             //    }
-            //});
+            //});*/
         }
 
         private void DisplayMenuNumber(int poz = 0)
@@ -537,7 +636,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public int ForgotPassword(string email, string newPassword)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(newPassword)) return 1;
-            if (IsEmailTaken(email)) return 2;
+            if (!IsEmailTaken(email)) return 2;
             UserModel user = GetByEmail(email);
             if (user == null) return 3;
             if (!IsGoodPassword(newPassword)) return 4;
