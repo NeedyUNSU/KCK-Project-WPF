@@ -19,7 +19,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private UserModel CurrentUser = new UserModel("Anonymous", "", "", "", UserType.Anonymous);
 
         #region Login Page
-        private string loginEmail;
+        private string loginEmail = "admin@unsu.com";
 
         public string LoginEmail
         {
@@ -27,13 +27,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { loginEmail = value; OnPropertyChanged(); }
         }
 
-        private string loginPasswd;
+        private string loginPasswd = "adm123";
 
         public string LoginPassword
         {
             get { return loginPasswd; }
             set { loginPasswd = value; OnPropertyChanged(); }
-        } 
+        }
         #endregion
 
         #region Register Page
@@ -122,12 +122,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public string ModifyUsername
         {
-            get 
-            { 
-                if (UserIsLogged)
-                return CurrentUser.Name;
-                else return modifyUsername;
-            }
+            get { return modifyUsername; }
             set { modifyUsername = value; OnPropertyChanged(); }
         }
 
@@ -135,13 +130,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public string ModifyEmail
         {
-            get 
-            {
-                if (UserIsLogged)
-                    return CurrentUser.Email;
-                else
-                    return modifyEmail; 
-            }
+            get { return modifyEmail; }
             set { modifyEmail = value; OnPropertyChanged(); }
         }
 
@@ -266,15 +255,15 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             RegisterPage = new RelayCommand(o =>
             {
                 loginEmail = "";
-                loginPasswd = "";                                   
-                DisplayMenuNumber(2);                               
-            });                                                     
-                                                                    
-            ForgotAPasswordPage = new RelayCommand(o =>             
-            {                                                       
-                DisplayMenuNumber(3);                               
-            });                                                     
-            
+                loginPasswd = "";
+                DisplayMenuNumber(2);
+            });
+
+            ForgotAPasswordPage = new RelayCommand(o =>
+            {
+                DisplayMenuNumber(3);
+            });
+
             ShowProfilePage = new RelayCommand(o =>
             {
                 DisplayMenuNumber(4);
@@ -315,7 +304,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 //    return;
                 //}
 
-                if(Login(loginEmail, loginPasswd) == 0)
+                if (Login(loginEmail, loginPasswd) == 0)
                 {
                     BackToMainMenu.Execute(this);
                     loginEmail = "";
@@ -328,6 +317,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                         mainViewModel.UserLoggedIn = true;
                     }
 
+                    modifyEmail = CurrentUser.Email;
+                    modifyUsername = CurrentUser.Name;
+
                     return;
                 }
                 else
@@ -335,9 +327,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     MessageBox.Show("Dane nie poprawne spróbuj ponownie.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-            } );
+            });
 
-            TryRegister = new RelayCommand(o => 
+            TryRegister = new RelayCommand(o =>
             {
                 List<bool> errors = new List<bool>();
                 List<string> messages = new List<string>();
@@ -456,113 +448,124 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
             });
 
-            ModifySaveOptionCommand = new RelayCommand(o => 
+            ModifySaveOptionCommand = new RelayCommand(o =>
             {
+                if (!CurrentUserIsLogged())
+                {
+                    MessageBox.Show("Użytkownika nie ma dostępu do tej strony!", "Modify userdata", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                    {
+                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                        mainViewModel.CurrentView = null;
+                        mainViewModel.UserLoggedIn = false;
+                    }
+
+                    return;
+                }
+
+
                 List<bool> errors = new List<bool>();
                 List<string> messages = new List<string>();
 
-                if (ModifyUsername != CurrentUser.Name)
+                if (modifyUsername != CurrentUser.Name)
                 {
-                    var result = ChangeMyName(ModifyUsername);
+                    var result = ChangeMyName(modifyUsername);
 
                     switch (result)
                     {
                         case 0:
                             //success
                             errors.Add(false);
-                            messages.Add($"Zmieniono nazwę użytkownika");
-                            return;
+                            messages.Add($"Nazwa użytkownika została pomyślnie zmieniona.");
+                            break;
                         case 1:
                             // empty string
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Nazwa Użytkownika: Uzupełnij dane przed wysłaniem formularza.");
                             break;
                         case 2:
                             // user not logged
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Użytkownik nie jest zalogowany.");
                             break;
                         case 3:
                             // username is used
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Nazwa użytkownika jest zajęta użyj innej.");
                             break;
                         default:
                             break;
                     }
                 }
 
-                if (ModifyEmail != CurrentUser.Email)
+                if (modifyEmail != CurrentUser.Email)
                 {
-                    var result = ChangeMyEmail(ModifyEmail);
+                    var result = ChangeMyEmail(modifyEmail);
 
                     switch (result)
                     {
                         case 0:
                             //success
                             errors.Add(false);
-                            messages.Add($"");
-                            return;
+                            messages.Add($"E-mail został pomyślnie zmieniony.");
+                            break;
                         case 1:
                             // empty string
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Email: Uzupełnij dane przed wysłaniem formularza.");
                             break;
                         case 2:
                             // user not logged
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Email: Użytkownik nie jest zalogowany.");
                             break;
                         case 3:
                             // email is used
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Email jest zajęty użyj innego.");
                             break;
                         case 4:
                             // email criteria are wrong
                             errors.Add(true);
-                            messages.Add($"");
+                            messages.Add($"Email nie jest zapisany w poprawnym formacie spróbuj np xx@xx.xx.");
                             break;
                         default:
                             break;
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(ModifyOldPassword) && !string.IsNullOrWhiteSpace(ModifyNewPassword))
+                if (!string.IsNullOrWhiteSpace(modifyOldPassword) && !string.IsNullOrWhiteSpace(modifyNewPassword))
                 {
-                    if (!IsGoodPassword(ModifyNewPassword))
+                    if (HashPassword(ModifyOldPassword) == CurrentUser.Password)
                     {
-                        // password do not match criteria
-                        errors.Add(true);
-                        messages.Add($"");
-                        return;
-                    }
-
-                    if (ModifyOldPassword == HashPassword(CurrentUser.Password))
-                    {
-                        var result = ChangeMyPassword(ModifyNewPassword);
+                        var result = ChangeMyPassword(modifyNewPassword);
 
                         switch (result)
                         {
                             case 0:
                                 //success
                                 errors.Add(false);
-                                messages.Add($"");
-                                return;
+                                messages.Add($"Hasło zostało pomyślnie zmienione.");
+                                ModifyOldPassword = "";
+                                ModifyNewPassword = "";
+                                break;
                             case 1:
                                 // empty string
                                 errors.Add(true);
-                                messages.Add($"");
+                                messages.Add($"Hasło: uzupełnij formularz przed wysłaniem.");
                                 break;
                             case 2:
                                 // user not logged
                                 errors.Add(true);
-                                messages.Add($"");
+                                messages.Add($"Hasło: Użytkownik nie jest zalogowany.");
                                 break;
                             case 3:
                                 // password criteria are wrong
                                 errors.Add(true);
-                                messages.Add($"");
+                                messages.Add($"Hasło nie spełnia podstawowycha wymagań takich jak jedna mała i duża litera, znak specjalny i liczbę.");
                                 break;
                             default:
                                 break;
@@ -571,32 +574,38 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     else
                     {
                         // wrong password
-                        messages.Add($"");
+                        errors.Add(true);
+                        messages.Add($"Hasło do konta nie jest poprawne");
                     }
                 }
 
                 if (errors.Count != 0)
                 {
-                    string outputError = "";
-                    string outputSuccess = "";
+                    List<string> outputError = new();
+                    List<string> outputSuccess = new();
 
                     for (int i = 0; i < errors.Count; i++)
                     {
                         if (errors[i])
                         {
-                            outputError += $"{messages[i]}\n";
+                            outputError.Add($"{messages[i]}");
                         }
                         else
                         {
-                            outputSuccess += $"{messages[i]}\n";
+                            outputSuccess.Add($"{messages[i]}");
                         }
                     }
 
-                    if(errors.Any(x=>x == true)) MessageBox.Show(outputError, "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (errors.Any(x => x == true)) MessageBox.Show(string.Join('\n', outputError), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    //continue good
-
+                    if (errors.Any(x => x == false)) MessageBox.Show(string.Join('\n', outputSuccess), "Validator", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+
+                errors.Clear();
+                messages.Clear();
+
+                ModifyEmail = CurrentUser.Email;
+                ModifyUsername = CurrentUser.Name;
             });
 
             /*
