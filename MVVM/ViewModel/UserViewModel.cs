@@ -116,6 +116,53 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         }
         #endregion
 
+        #region Modify User Data
+
+        private string modifyUsername;
+
+        public string ModifyUsername
+        {
+            get 
+            { 
+                if (UserIsLogged)
+                return CurrentUser.Name;
+                else return modifyUsername;
+            }
+            set { modifyUsername = value; OnPropertyChanged(); }
+        }
+
+        private string modifyEmail;
+
+        public string ModifyEmail
+        {
+            get 
+            {
+                if (UserIsLogged)
+                    return CurrentUser.Email;
+                else
+                    return modifyEmail; 
+            }
+            set { modifyEmail = value; OnPropertyChanged(); }
+        }
+
+        private string modifyOldPassword;
+
+        public string ModifyOldPassword
+        {
+            get { return modifyOldPassword; }
+            set { modifyOldPassword = value; OnPropertyChanged(); }
+        }
+
+        private string modifyNewPassword;
+
+        public string ModifyNewPassword
+        {
+            get { return modifyNewPassword; }
+            set { modifyNewPassword = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
@@ -134,6 +181,10 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand TryRegister { get; set; }
 
         public ICommand TryForgotPasswordChange { get; set; }
+
+
+
+        public ICommand ModifySaveOptionCommand { get; set; }
 
 
 
@@ -405,7 +456,149 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
             });
 
-            
+            ModifySaveOptionCommand = new RelayCommand(o => 
+            {
+                List<bool> errors = new List<bool>();
+                List<string> messages = new List<string>();
+
+                if (ModifyUsername != CurrentUser.Name)
+                {
+                    var result = ChangeMyName(ModifyUsername);
+
+                    switch (result)
+                    {
+                        case 0:
+                            //success
+                            errors.Add(false);
+                            messages.Add($"Zmieniono nazwę użytkownika");
+                            return;
+                        case 1:
+                            // empty string
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        case 2:
+                            // user not logged
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        case 3:
+                            // username is used
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (ModifyEmail != CurrentUser.Email)
+                {
+                    var result = ChangeMyEmail(ModifyEmail);
+
+                    switch (result)
+                    {
+                        case 0:
+                            //success
+                            errors.Add(false);
+                            messages.Add($"");
+                            return;
+                        case 1:
+                            // empty string
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        case 2:
+                            // user not logged
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        case 3:
+                            // email is used
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        case 4:
+                            // email criteria are wrong
+                            errors.Add(true);
+                            messages.Add($"");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(ModifyOldPassword) && !string.IsNullOrWhiteSpace(ModifyNewPassword))
+                {
+                    if (!IsGoodPassword(ModifyNewPassword))
+                    {
+                        // password do not match criteria
+                        errors.Add(true);
+                        messages.Add($"");
+                        return;
+                    }
+
+                    if (ModifyOldPassword == HashPassword(CurrentUser.Password))
+                    {
+                        var result = ChangeMyPassword(ModifyNewPassword);
+
+                        switch (result)
+                        {
+                            case 0:
+                                //success
+                                errors.Add(false);
+                                messages.Add($"");
+                                return;
+                            case 1:
+                                // empty string
+                                errors.Add(true);
+                                messages.Add($"");
+                                break;
+                            case 2:
+                                // user not logged
+                                errors.Add(true);
+                                messages.Add($"");
+                                break;
+                            case 3:
+                                // password criteria are wrong
+                                errors.Add(true);
+                                messages.Add($"");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // wrong password
+                        messages.Add($"");
+                    }
+                }
+
+                if (errors.Count != 0)
+                {
+                    string outputError = "";
+                    string outputSuccess = "";
+
+                    for (int i = 0; i < errors.Count; i++)
+                    {
+                        if (errors[i])
+                        {
+                            outputError += $"{messages[i]}\n";
+                        }
+                        else
+                        {
+                            outputSuccess += $"{messages[i]}\n";
+                        }
+                    }
+
+                    if(errors.Any(x=>x == true)) MessageBox.Show(outputError, "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    //continue good
+
+                }
+            });
+
             /*
             //EnterCommand = new RelayCommand(o => 
             //{ 
