@@ -33,7 +33,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Label Grid.Column="0" HorizontalAlignment="Right">Email:</Label>
                 <TextBox Grid.Column="1" Text="{Binding LoginEmail}"/>
                 <Label Grid.Row="1"></Label>
@@ -41,7 +41,7 @@
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LoginPassword}" />
                 <Label Grid.Row="3"></Label>
             </Grid>
-         
+
             <UniformGrid Rows="1" Width="200px">
                 <Button Content="Register" Command="{Binding RegisterPage}" Margin="5" HorizontalAlignment="Stretch" Width="Auto"/>
                 <Button Content="Zaloguj się" Command="{Binding TryLogin}" Margin="5" HorizontalAlignment="Stretch" Width="Auto" RenderTransformOrigin="0.494,0.573"/>
@@ -131,12 +131,18 @@
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Profil użytkownika 4" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-          
+            <TextBlock Text="{Binding ProfileUsername}" FontWeight="Bold" FontSize="25" Margin="0,0,0,20" HorizontalAlignment="Center" />
+            <Label Content="E-mail:"/>
+            <TextBlock Text="{Binding ProfileEmail}" FontWeight="Bold" FontSize="19" Margin="0,0,0,20" />
+            <Label Content="Prawa dostępu:"/>
+            <TextBlock Text="{Binding ProfileUserType}" FontWeight="Bold" FontSize="19" Margin="0,0,0,20" />
+
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Modyfikuj swoje dane 5" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Jeśli zmienisz jakieś dane, zatwierdź zmiany przyciskiem poniżej formularza. 👤" FontWeight="Light" FontSize="12" Margin="0,0,0,20" />
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -164,7 +170,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label></Label>
-                    <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">Nazwa użytkownika: </Label>
+                    <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">Nazwa użytkownika:</Label>
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ModifyUsername}" />
                 </Grid>
 
@@ -210,16 +216,65 @@
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
-        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[6], Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[6], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Menu Moderatora 6" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>-->
 
-        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[7], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu Administratora 7" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>-->
+        </StackPanel>
+
+        <StackPanel Margin="20" Visibility="{Binding MenuAppear[7], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Menu Administratora 7" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                </Grid>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.1*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="0.1*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+
+            <DataGrid ItemsSource="{Binding AdminUsers}" 
+                  AutoGenerateColumns="False" 
+                  HeadersVisibility="Column" 
+                  CanUserResizeColumns="True" 
+                  CanUserSortColumns="True" 
+                  RowHeight="30" 
+                  GridLinesVisibility="All"
+                  IsReadOnly="True"
+                  MinHeight="270" MaxHeight="{Binding MaxHeight}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                    <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Name}" Width="0.5*" />
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="0.7*" />
+                    <DataGridTextColumn Header="Typ użytkownika" Binding="{Binding TypeString}" Width="0.7*" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+        </StackPanel>
     </Grid>
 </UserControl>

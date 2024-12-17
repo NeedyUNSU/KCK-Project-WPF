@@ -27,7 +27,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { loginEmail = value; OnPropertyChanged(); }
         }
 
-        private string loginPasswd = "adm123";
+        private string loginPasswd = "!QAZ2wsx";
 
         public string LoginPassword
         {
@@ -116,6 +116,34 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         }
         #endregion
 
+        #region User Profile
+
+        private string profileUsername;
+
+        public string ProfileUsername
+        {
+            get { return $"👤 {profileUsername}"; }
+            set { profileUsername = value; OnPropertyChanged(); }
+        }
+
+        private string profileEmail;
+       
+        public string ProfileEmail
+        {
+            get { return profileEmail; }
+            set { profileEmail = value; OnPropertyChanged(); }
+        }
+
+        private string profileUserType;
+
+        public string ProfileUserType
+        {
+            get { return profileUserType; }
+            set { profileUserType = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
         #region Modify User Data
 
         private string modifyUsername;
@@ -152,6 +180,35 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         #endregion
 
+        #region Administrator Menu
+
+        private List<UserModel> adminUsers;
+
+        public List<UserModel> AdminUsers
+        {
+            get { return GetAll(); }
+            set { adminUsers = value; OnPropertyChanged(); }
+        }
+
+        private double maxHeight = 230;
+
+        public double MaxHeight
+        {
+            get { return maxHeight; }
+            set { maxHeight = value; OnPropertyChanged(); }
+        }
+
+        public void UpdateMaxHeight()
+        {
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            MaxHeight = mainWindow.Height - 180;
+        }
+
+        
+
+
+        #endregion
+
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
@@ -174,6 +231,24 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
 
         public ICommand ModifySaveOptionCommand { get; set; }
+
+
+
+        private MainWindowViewModel MainContext 
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    return mainWindow.DataContext as MainWindowViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
 
 
 
@@ -219,27 +294,14 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                         return;
                     }
 
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                    {
-                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
-
-                        mainViewModel.CurrentView = null;
-                    }
+                    MainContext.CurrentView = null;
                 }
             });
 
             BackToMainMenu = new RelayCommand(o =>
             {
                 DisplayMenuNumber();
-
-                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                {
-                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
-
-                    mainViewModel.CurrentView = null;
-                }
+                MainContext.CurrentView = null;
             });
 
             MenuPage = new RelayCommand(o =>
@@ -266,7 +328,14 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             ShowProfilePage = new RelayCommand(o =>
             {
+                if (!CurrentUserIsLogged()) return;
+
+                ProfileUsername = CurrentUser.Name;
+                ProfileEmail = CurrentUser.Email;
+                ProfileUserType = CurrentUser.TypeString;
+
                 DisplayMenuNumber(4);
+
             });
 
             ModifyDataPage = new RelayCommand(o =>
@@ -276,11 +345,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             ModeratorMenuPage = new RelayCommand(o =>
             {
+                if(!CurrentUserIsModerator()) return;
                 DisplayMenuNumber(6);
             });
 
             AdministratorMenuPage = new RelayCommand(o =>
             {
+                if (!CurrentUserIsAdministartor()) return;
                 DisplayMenuNumber(7);
             });
 
@@ -309,14 +380,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     BackToMainMenu.Execute(this);
                     loginEmail = "";
                     loginPasswd = "";
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                    {
-                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
 
-                        mainViewModel.UserLoggedIn = true;
-                    }
-
+                    MainContext.UserLoggedIn = true;
+                    
                     modifyEmail = CurrentUser.Email;
                     modifyUsername = CurrentUser.Name;
 
@@ -380,14 +446,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
                     DisplayMenuNumber();
 
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                    {
-                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
-
-                        mainViewModel.CurrentView = null;
-                        mainViewModel.UserLoggedIn = true;
-                    }
+                    MainContext.CurrentView = null;
+                    MainContext.UserLoggedIn = true;
+                    
                 }
 
             });
@@ -453,15 +514,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 if (!CurrentUserIsLogged())
                 {
                     MessageBox.Show("Użytkownika nie ma dostępu do tej strony!", "Modify userdata", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
-                    {
-                        MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
 
-                        mainViewModel.CurrentView = null;
-                        mainViewModel.UserLoggedIn = false;
-                    }
+                    DisplayMenuNumber(1);
+
+                    MainContext.CurrentView = null;
+                    MainContext.UserLoggedIn = false;
 
                     return;
                 }

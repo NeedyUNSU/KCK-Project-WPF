@@ -17,6 +17,27 @@ namespace KCK_Project_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    return mainWindow.DataContext as MainWindowViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MainContext.UserVM.UpdateMaxHeight();
+        }
+
         public MainWindow()
         {
             this.DataContext = new MainWindowViewModel();
