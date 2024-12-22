@@ -26,7 +26,5 @@ namespace KCK_Project_WPF.MVVM.View
             InitializeComponent();
 
         }
-
-        
     }
 }

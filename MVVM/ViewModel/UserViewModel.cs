@@ -17,6 +17,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
     {
         private List<UserModel> _users;
         private UserModel CurrentUser = new UserModel("Anonymous", "", "", "", UserType.Anonymous);
+        private static readonly Random random = new Random();
 
         #region Login Page
         private string loginEmail = "admin@unsu.com";
@@ -186,7 +187,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public List<UserModel> AdminUsers
         {
-            get { return GetAll(); }
+            get { return adminUsers; }
             set { adminUsers = value; OnPropertyChanged(); }
         }
 
@@ -216,13 +217,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         #region Filters SubPage 
 
         #region Sort Order
-        private string adminOrderTypeValue;
-
-        public string AdminOrderTypeValue
-        {
-            get { return adminOrderTypeValue; }
-            set { adminOrderTypeValue = value; OnPropertyChanged(); }
-        }
 
         private List<String> adminOrderType;
 
@@ -230,6 +224,14 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         {
             get { return adminOrderType; }
             set { adminOrderType = value; OnPropertyChanged(); }
+        }
+
+        private string adminOrderTypeValue;
+
+        public string AdminOrderTypeValue
+        {
+            get { return adminOrderTypeValue; }
+            set { adminOrderTypeValue = value; OnPropertyChanged(); }
         }
 
         private string adminOrderByValue;
@@ -279,6 +281,67 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         #endregion
 
+        #region Add User SubPage
+
+        private bool adminAddUserMenu = false;
+
+        public bool AdminAddUserMenu
+        {
+            get { return adminAddUserMenu; }
+            set { adminAddUserMenu = value; OnPropertyChanged(); }
+        }
+
+        private string adminAddUserName;
+
+        public string AdminAddUserName
+        {
+            get { return adminAddUserName; }
+            set { adminAddUserName = value; OnPropertyChanged(); }
+        }
+
+        private string adminAddUserProfilePicture;
+
+        public string AdminAddUserProfilePicture
+        {
+            get { return adminAddUserProfilePicture; }
+            set { adminAddUserProfilePicture = value; OnPropertyChanged(); }
+        }
+
+        private string adminAddUserEmail;
+
+        public string AdminAddUserEmail
+        {
+            get { return adminAddUserEmail; }
+            set { adminAddUserEmail = value; OnPropertyChanged(); }
+        }
+
+        private string adminAddUserPassword;
+
+        public string AdminAddUserPassword
+        {
+            get { return adminAddUserPassword; }
+            set { adminAddUserPassword = value; OnPropertyChanged(); }
+        }
+
+        private string adminAddUserTypeValue;
+
+        public string AdminAddUserTypeValue
+        {
+            get { return adminAddUserTypeValue; }
+            set { adminAddUserTypeValue = value; OnPropertyChanged(); }
+        }
+        private List<string> adminAddUserType;
+
+        public List<string> AdminAddUserType
+        {
+            get { return adminAddUserType; }
+            set { adminAddUserType = value; OnPropertyChanged(); }
+        }
+
+
+
+        #endregion
+
         #endregion
 
         public ICommand BackToMainMenu { get; set; }
@@ -305,6 +368,15 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand AdminAddUserSubPageCommand { get; set; }
         public ICommand AdminRestartFiltersSubPageCommand { get; set; }
         public ICommand AdminUpdateFiltersReloadCommand { get; set; }
+        public ICommand AdminCloseFiltersSubPageCommand { get; set; }
+
+
+        public ICommand AdminCloseAddUserSubPageCommand { get; set; }
+        public ICommand AdminAddUserCommand { get; set; }
+        public ICommand AdminAddUserClearCommand { get; set; }
+        public ICommand AdminAddUserRandomCommand { get; set; }
+
+
 
         private MainWindowViewModel MainContext
         {
@@ -346,26 +418,50 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 Add(new UserModel($"test{i}", ".\\", $"test{i}@unsu.com", "!QAZ2wsx", UserType.Standard));
             }
 
+
+            AdminOrderType = new() { "Rosnąco", "Malejąco" };
+            AdminOrderTypeValue = AdminOrderType[0];
+            AdminOrderBy = new() { "Domyślne sortowanie", "Id", "Nazwa użytkownika", "Email", "Typ użytkownika" };
+            AdminOrderByValue = AdminOrderBy[0];
+            AdminUsers = GetAll();
+            AdminSearchDataType = new() { "Globalne wyszukiwanie", "Id", "Nazwa użytkownika", "Email", "Typ użytkownika" };
+            AdminSearchDataTypeValue = AdminSearchDataType[0];
+
+            AdminAddUserType = new() { "Standardowy", "Moderator", "Administrator" };
+            AdminAddUserTypeValue = AdminAddUserType[0];
+
             BackToMenu = new RelayCommand(o =>
             {
                 if (CurrentUserIsLogged())
                 {
+                    var index = Array.IndexOf(menuAppear, true);
+                    if (index == 5)
+                    {
+                        ModifyUsername = CurrentUser.Name;
+                        ModifyEmail = CurrentUser.Email;
+                        ModifyOldPassword = "";
+                        ModifyNewPassword = "";
+                    }
+
+                    if (index == 7)
+                    {
+                        AdminAddUserMenu = false;
+                        AdminSearchMenu = false;
+                        AdminRestartFiltersSubPageCommand?.Execute(this);
+                        AdminAddUserClearCommand?.Execute(this);
+                    }
+
                     DisplayMenuNumber();
                 }
                 else
                 {
                     var index = Array.IndexOf(menuAppear, true);
+                    MessageBox.Show(index.ToString(), index.ToString());
                     if (index > 1 && index <= 3)
                     {
                         DisplayMenuNumber(1);
                         return;
                     }
-                    if (index > 3 && index <= 7)
-                    {
-                        DisplayMenuNumber();
-                        return;
-                    }
-
                     MainContext.CurrentView = null;
                 }
             });
@@ -739,7 +835,197 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             AdminOpenFiltersSubPageCommand = new RelayCommand(o =>
             {
+                if (AdminSearchMenu) { AdminSearchMenu = false; return; }
                 AdminSearchMenu = true;
+                if (AdminAddUserMenu) AdminAddUserMenu = false;
+            });
+
+            AdminRestartFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                AdminOrderTypeValue = AdminOrderType[0];
+                AdminOrderByValue = AdminOrderBy[0];
+                AdminUsers = GetAll();
+                AdminSearchDataTypeValue = AdminSearchDataType[0];
+                AdminSearchString = "";
+            });
+
+            AdminCloseFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                AdminSearchMenu = false;
+            });
+
+            AdminUpdateFiltersReloadCommand = new RelayCommand(o =>
+            {
+                AdminSearchMenu = false;
+                if (AdminOrderByValue != AdminOrderBy[0])
+                {
+                    if (AdminOrderTypeValue == AdminOrderType[0])
+                    {
+                        if (AdminOrderBy[1] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderByDescending(x => x.Id).ToList();
+                        }
+                        else if (AdminOrderBy[2] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderByDescending(x => x.Name).ToList();
+                        }
+                        else if (AdminOrderBy[3] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderByDescending(x => x.Email).ToList();
+                        }
+                        else if (AdminOrderBy[4] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderByDescending(x => x.TypeString).ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (AdminOrderBy[1] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderBy(x => x.Id).ToList();
+                        }
+                        else if (AdminOrderBy[2] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderBy(x => x.Name).ToList();
+                        }
+                        else if (AdminOrderBy[3] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderBy(x => x.Email).ToList();
+                        }
+                        else if (AdminOrderBy[4] == AdminOrderByValue)
+                        {
+                            AdminUsers = GetAll().OrderBy(x => x.TypeString).ToList();
+                        }
+                    }
+                }
+                else AdminUsers = GetAll();
+
+                if (!string.IsNullOrWhiteSpace(AdminSearchString))
+                {
+                    if (AdminSearchDataTypeValue == AdminSearchDataType[0])
+                    {
+                        AdminUsers = AdminUsers.Where(o => $"{o.Id} {o.Name} {o.Email} {o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                    }
+                    else if (AdminSearchDataTypeValue == AdminSearchDataType[1])
+                    {
+                        AdminUsers = AdminUsers.Where(o => $"{o.Id}".Contains(AdminSearchString)).ToList();
+                    }
+                    else if (AdminSearchDataTypeValue == AdminSearchDataType[2])
+                    {
+                        AdminUsers = AdminUsers.Where(o => $"{o.Name}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                    }
+                    else if (AdminSearchDataTypeValue == AdminSearchDataType[3])
+                    {
+                        AdminUsers = AdminUsers.Where(o => $"{o.Email}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                    }
+                    else if (AdminSearchDataTypeValue == AdminSearchDataType[4])
+                    {
+                        AdminUsers = AdminUsers.Where(o => $"{o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                    }
+                }
+
+
+            });
+
+            AdminAddUserSubPageCommand = new RelayCommand(o =>
+            {
+                if (AdminAddUserMenu) { AdminAddUserMenu = false; return; }
+                AdminAddUserMenu = true;
+                if (AdminSearchMenu) AdminSearchMenu = false;
+
+                AdminAddUserClearCommand?.Execute(this);
+            });
+
+            AdminAddUserClearCommand = new RelayCommand(o =>
+            {
+                AdminAddUserEmail = "";
+                AdminAddUserName = "";
+                AdminAddUserProfilePicture = ".\\";
+                AdminAddUserPassword = "";
+                AdminAddUserTypeValue = AdminAddUserType[0];
+            });
+
+            AdminAddUserRandomCommand = new RelayCommand(o =>
+            {
+                AdminAddUserEmail = GenerateEmail();
+                AdminAddUserName = AdminAddUserEmail.Substring(0, AdminAddUserEmail.IndexOf('@') - 1);
+                AdminAddUserProfilePicture = ".\\";
+                AdminAddUserPassword = GeneratePassword(random.Next(5, 15));
+            });
+
+            AdminCloseAddUserSubPageCommand = new RelayCommand(o =>
+            {
+                AdminAddUserMenu = false;
+            });
+
+            AdminAddUserCommand = new RelayCommand(o =>
+            {
+                List<string> messenges = new();
+                List<bool> errors = new();
+
+                if (string.IsNullOrWhiteSpace(AdminAddUserName) || string.IsNullOrWhiteSpace(AdminAddUserProfilePicture) || string.IsNullOrWhiteSpace(AdminAddUserEmail) || string.IsNullOrWhiteSpace(AdminAddUserPassword))
+                {
+                    MessageBox.Show("Wypełnij formularz przed przesłaniem!", "Validator", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (IsNameTaken(AdminAddUserName))
+                {
+                    messenges.Add($"- Nazwa {AdminAddUserName} jest zajęta!");
+                    errors.Add(true);
+                }
+
+                if (!IsGoodEmail(AdminAddUserEmail))
+                {
+                    messenges.Add($"- E-mail {AdminAddUserEmail} nie jest poprawny spróbuj napisać (xx@xx.xx)!");
+                    errors.Add(true);
+                }
+
+                if (IsEmailTaken(AdminAddUserEmail))
+                {
+                    messenges.Add($"- E-mail {AdminAddUserEmail} jest już zajęty!");
+                    errors.Add(true);
+                }
+
+                if (!IsGoodPassword(AdminAddUserPassword))
+                {
+                    messenges.Add($"- Hasło {AdminAddUserPassword} nie jest poprawne spróbuj użyj jednej dużej i małej litery, znaku specjalnego i cyfry!");
+                    errors.Add(true);
+                }
+
+
+                // add user type 
+
+
+
+
+
+                if (errors.Any(e => e == true))
+                {
+                    MessageBox.Show(string.Join('\n', messenges), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    var output = Add(new UserModel(AdminAddUserName, AdminAddUserProfilePicture, AdminAddUserEmail, AdminAddUserPassword, UserType.Standard));
+
+                    switch (output)
+                    {
+                        case 0:
+                            MessageBox.Show($"Użytkownik {AdminAddUserName} został pomyślnie dodany", "Validator", MessageBoxButton.OK, MessageBoxImage.Information);
+                            AdminAddUserClearCommand.Execute(this);
+                            AdminUpdateFiltersReloadCommand.Execute(this);
+                            break;
+                        case 1:
+                            MessageBox.Show($"Nazwa {AdminAddUserName} jest zajęta!", "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                            break;
+                        case 2:
+                            MessageBox.Show($"E-mail {AdminAddUserEmail} jest już zajęty!", "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                            break;
+                        case 3:
+                            MessageBox.Show($"Błąd tworzenia użytkownika", "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                            break;
+                    }
+                }
             });
 
             /*
@@ -758,6 +1044,58 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
             buf[poz] = true;
             MenuAppear = buf;
+        }
+
+        private string GeneratePassword(int length = 12)
+        {
+            if (length < 4)
+            {
+                throw new ArgumentException("Password length must be at least 4 to meet all requirements.");
+            }
+
+            const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+            const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string specialChars = "!@#$%&*()";
+
+            char[] password = new char[length];
+            password[0] = lowerCase[random.Next(lowerCase.Length)];
+            password[1] = upperCase[random.Next(upperCase.Length)];
+            password[2] = digits[random.Next(digits.Length)];
+            password[3] = specialChars[random.Next(specialChars.Length)];
+
+            string allChars = lowerCase + upperCase + digits + specialChars;
+            for (int i = 4; i < length; i++)
+            {
+                password[i] = allChars[random.Next(allChars.Length)];
+            }
+
+            return new string(password.OrderBy(x => random.Next()).ToArray());
+        }
+
+        private string GenerateEmail()
+        {
+            const string localPartChars = "abcdefghijklmnopqrstuvwxyz.";
+            const string domainChars = "abcdefghijklmnopqrstuvwxyz";
+            const string tldChars = "abcdefghijklmnopqrstuvwxyz";
+
+            string localPart = GenerateRandomString(localPartChars, random.Next(5, 10));
+
+            string domain = GenerateRandomString(domainChars, random.Next(3, 7));
+
+            string tld = GenerateRandomString(tldChars, random.Next(2, 4));
+
+            return $"{localPart}@{domain}.{tld}";
+        }
+
+        private static string GenerateRandomString(string chars, int length)
+        {
+            char[] result = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = chars[random.Next(chars.Length)];
+            }
+            return new string(result);
         }
 
         // load _users from file

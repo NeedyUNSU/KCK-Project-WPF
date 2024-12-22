@@ -239,37 +239,6 @@
 
                 </Grid>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-
-                    </Grid>
-                </Grid>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.1*"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="0.1*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="0.1*"/>
-                        <RowDefinition/>
-                        <RowDefinition Height="0.1*"/>
-                    </Grid.RowDefinitions>
-                </Grid>
-
                 <DataGrid ItemsSource="{Binding AdminUsers}" 
                 AutoGenerateColumns="False" 
                 HeadersVisibility="Column" 
@@ -300,14 +269,17 @@
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
                     <StackPanel VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="Filtry" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
+                        <Grid>
+                            <TextBlock Text="Filtry" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
+                            <Button Content="X" Command="{Binding AdminCloseFiltersSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
+                        </Grid>
                         <Border BorderThickness="1px" BorderBrush="Black" Padding="0,10,0,0" Margin="10,0,10,0">
                             <StackPanel>
                                 <TextBlock Text="Ustawienia Sortowania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
                                 <TextBlock Text="* Sortowanie" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox SelectedValue="{Binding AdminOrderTypeValue}" DataContext="{Binding AdminOrderType}" Margin="10,0,10,10"/>
+                                <ComboBox ItemsSource="{Binding AdminOrderType}" SelectedValue="{Binding AdminOrderTypeValue}" Margin="10,0,10,10"/>
                                 <TextBlock Text="* Sortuj przez" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox SelectedValue="{Binding AdminOrderByValue}" DataContext="{Binding AdminOrderBy}" Margin="10,0,10,10"/>
+                                <ComboBox ItemsSource="{Binding AdminOrderBy}" SelectedValue="{Binding AdminOrderByValue}" Margin="10,0,10,10"/>
                             </StackPanel>
                         </Border>
 
@@ -317,17 +289,49 @@
                                 <TextBlock Text="* Wyszukaj ciąg znaków" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
                                 <TextBox Text="{Binding AdminSearchString}" Margin="10,0,10,10"/>
                                 <TextBlock Text="* Wyszukaj przez zmienną" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox SelectedValue="{Binding AdminSearchDataTypeValue}" DataContext="{Binding AdminSearchDataType}" Margin="10,0,10,10"/>
-                                <Button Content="Wyczyść Filtry" Command="{Binding AdminRestartFiltersSubPageCommand}" Margin="10,0,10,10"/>
+                                <ComboBox SelectedValue="{Binding AdminSearchDataTypeValue}" ItemsSource="{Binding AdminSearchDataType}" Margin="10,0,10,10"/>
                             </StackPanel>
                         </Border>
 
+                        <Button Content="Resetuj Filtry" Command="{Binding AdminRestartFiltersSubPageCommand}" Margin="10,0,10,10"/>
                         <Button Content="Zastosuj Filtry" Command="{Binding AdminUpdateFiltersReloadCommand}" Margin="10,0,10,10"/>
 
                     </StackPanel>
                 </Border>
 
             </Grid>
+
+            <Grid Visibility="{Binding AdminAddUserMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Background="White">
+                        <Grid>
+                            <TextBlock Text="Dodaj użytkownika" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
+                            <Button Content="X" Command="{Binding AdminCloseAddUserSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
+                        </Grid>
+                        <TextBlock Text="* Nazwa użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                        <TextBox Text="{Binding AdminAddUserName}" Margin="10,0,10,10"/>
+                        <TextBlock Text="* Zdjęcie Profilowe" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                        <TextBox Text="{Binding AdminAddUserProfilePicture}" Margin="10,0,10,10"/>
+                        <TextBlock Text="* E-mail" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                        <TextBox Text="{Binding AdminAddUserEmail}" Margin="10,0,10,10"/>
+                        <TextBlock Text="* Hasło" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                        <TextBox Text="{Binding AdminAddUserPassword}" Margin="10,0,10,10"/>
+                        <TextBlock Text="* Wybierz typ użytkownika (not implementet yet)" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                        <ComboBox SelectedValue="{Binding AdminAddUserTypeValue}" ItemsSource="{Binding AdminAddUserType}" Margin="10,0,10,10"/>
+                        <Button Content="Wyczyść" Command="{Binding AdminAddUserClearCommand}" Margin="10,0,10,10"/>
+                        <Button Content="Generuj losowo" Command="{Binding AdminAddUserRandomCommand}" Margin="10,0,10,10"/>
+                        <Button Content="Dodaj użytkownika" Command="{Binding AdminAddUserCommand}" Margin="10,0,10,10"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
         </Grid>
     </Grid>
 </UserControl>
