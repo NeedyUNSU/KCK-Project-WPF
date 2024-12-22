@@ -127,7 +127,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         }
 
         private string profileEmail;
-       
+
         public string ProfileEmail
         {
             get { return profileEmail; }
@@ -204,11 +204,82 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             MaxHeight = mainWindow.Height - 180;
         }
 
-        
+        private bool adminSearchMenu = false;
 
+        public bool AdminSearchMenu
+        {
+            get { return adminSearchMenu; }
+            set { adminSearchMenu = value; OnPropertyChanged(); }
+        }
+
+
+        #region Filters SubPage 
+
+        #region Sort Order
+        private string adminOrderTypeValue;
+
+        public string AdminOrderTypeValue
+        {
+            get { return adminOrderTypeValue; }
+            set { adminOrderTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<String> adminOrderType;
+
+        public List<String> AdminOrderType
+        {
+            get { return adminOrderType; }
+            set { adminOrderType = value; OnPropertyChanged(); }
+        }
+
+        private string adminOrderByValue;
+
+        public string AdminOrderByValue
+        {
+            get { return adminOrderByValue; }
+            set { adminOrderByValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> adminOrderBy;
+
+        public List<string> AdminOrderBy
+        {
+            get { return adminOrderBy; }
+            set { adminOrderBy = value; OnPropertyChanged(); }
+        }
+        #endregion
+
+        #region SearchString
+
+        private string adminSearchString;
+
+        public string AdminSearchString
+        {
+            get { return adminSearchString; }
+            set { adminSearchString = value; OnPropertyChanged(); }
+        }
+
+        private string adminSearchDataTypeValue;
+
+        public string AdminSearchDataTypeValue
+        {
+            get { return adminSearchDataTypeValue; }
+            set { adminSearchDataTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> adminSearchDataType;
+
+        public List<string> AdminSearchDataType
+        {
+            get { return adminSearchDataType; }
+            set { adminSearchDataType = value; OnPropertyChanged(); }
+        }
 
         #endregion
 
+        #endregion
+
+        #endregion
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
@@ -228,13 +299,14 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public ICommand TryForgotPasswordChange { get; set; }
 
-
-
         public ICommand ModifySaveOptionCommand { get; set; }
 
+        public ICommand AdminOpenFiltersSubPageCommand { get; set; }
+        public ICommand AdminAddUserSubPageCommand { get; set; }
+        public ICommand AdminRestartFiltersSubPageCommand { get; set; }
+        public ICommand AdminUpdateFiltersReloadCommand { get; set; }
 
-
-        private MainWindowViewModel MainContext 
+        private MainWindowViewModel MainContext
         {
             get
             {
@@ -345,7 +417,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             ModeratorMenuPage = new RelayCommand(o =>
             {
-                if(!CurrentUserIsModerator()) return;
+                if (!CurrentUserIsModerator()) return;
                 DisplayMenuNumber(6);
             });
 
@@ -382,7 +454,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     loginPasswd = "";
 
                     MainContext.UserLoggedIn = true;
-                    
+
                     modifyEmail = CurrentUser.Email;
                     modifyUsername = CurrentUser.Name;
 
@@ -448,7 +520,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
                     MainContext.CurrentView = null;
                     MainContext.UserLoggedIn = true;
-                    
+
                 }
 
             });
@@ -663,6 +735,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
                 ModifyEmail = CurrentUser.Email;
                 ModifyUsername = CurrentUser.Name;
+            });
+
+            AdminOpenFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                AdminSearchMenu = true;
             });
 
             /*

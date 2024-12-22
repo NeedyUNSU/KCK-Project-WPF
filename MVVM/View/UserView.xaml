@@ -222,59 +222,112 @@
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[7], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu Administratora 7" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
+        <Grid Margin="20" Visibility="{Binding MenuAppear[7], Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Menu Administratora 7" Grid.Column="0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+
+                    <Button Content="Filtry" Grid.Column="2" Command="{Binding AdminOpenFiltersSubPageCommand}" Margin="10,20,0,20"/>
+                    <Button Content="Dodaj użytkownika" Grid.Column="3" Command="{Binding AdminAddUserSubPageCommand}" Margin="10,20,0,20"/>
+
 
                 </Grid>
-            </Grid>
 
-            <Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                    </Grid>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.1*"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="0.1*"/>
+                    </Grid.RowDefinitions>
+                </Grid>
+
+                <DataGrid ItemsSource="{Binding AdminUsers}" 
+                AutoGenerateColumns="False" 
+                HeadersVisibility="Column" 
+                CanUserResizeColumns="True" 
+                CanUserSortColumns="True" 
+                RowHeight="30" 
+                GridLinesVisibility="All"
+                IsReadOnly="True"
+                MinHeight="270" MaxHeight="{Binding MaxHeight}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                        <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Name}" Width="0.5*" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="0.7*" />
+                        <DataGridTextColumn Header="Typ użytkownika" Binding="{Binding TypeString}" Width="0.7*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+
+                <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+            </StackPanel>
+            <Grid Visibility="{Binding AdminSearchMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.1*"/>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="0.1*"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="0.1*"/>
-                </Grid.RowDefinitions>
+                <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Background="White">
+                        <TextBlock Text="Filtry" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
+                        <Border BorderThickness="1px" BorderBrush="Black" Padding="0,10,0,0" Margin="10,0,10,0">
+                            <StackPanel>
+                                <TextBlock Text="Ustawienia Sortowania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBlock Text="* Sortowanie" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <ComboBox SelectedValue="{Binding AdminOrderTypeValue}" DataContext="{Binding AdminOrderType}" Margin="10,0,10,10"/>
+                                <TextBlock Text="* Sortuj przez" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <ComboBox SelectedValue="{Binding AdminOrderByValue}" DataContext="{Binding AdminOrderBy}" Margin="10,0,10,10"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border BorderThickness="1px" BorderBrush="Black" Padding="0,10,0,0" Margin="10,10,10,10">
+                            <StackPanel>
+                                <TextBlock Text="Ustawienia wyszukiwania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBlock Text="* Wyszukaj ciąg znaków" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBox Text="{Binding AdminSearchString}" Margin="10,0,10,10"/>
+                                <TextBlock Text="* Wyszukaj przez zmienną" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <ComboBox SelectedValue="{Binding AdminSearchDataTypeValue}" DataContext="{Binding AdminSearchDataType}" Margin="10,0,10,10"/>
+                                <Button Content="Wyczyść Filtry" Command="{Binding AdminRestartFiltersSubPageCommand}" Margin="10,0,10,10"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Content="Zastosuj Filtry" Command="{Binding AdminUpdateFiltersReloadCommand}" Margin="10,0,10,10"/>
+
+                    </StackPanel>
+                </Border>
+
             </Grid>
-
-            <DataGrid ItemsSource="{Binding AdminUsers}" 
-                  AutoGenerateColumns="False" 
-                  HeadersVisibility="Column" 
-                  CanUserResizeColumns="True" 
-                  CanUserSortColumns="True" 
-                  RowHeight="30" 
-                  GridLinesVisibility="All"
-                  IsReadOnly="True"
-                  MinHeight="270" MaxHeight="{Binding MaxHeight}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
-                    <DataGridTextColumn Header="Nazwa użytkownika" Binding="{Binding Name}" Width="0.5*" />
-                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="0.7*" />
-                    <DataGridTextColumn Header="Typ użytkownika" Binding="{Binding TypeString}" Width="0.7*" />
-                </DataGrid.Columns>
-            </DataGrid>
-
-
-
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
