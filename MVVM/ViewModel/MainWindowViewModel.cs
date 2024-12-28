@@ -76,10 +76,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 CurrentView = UserVM;
             });
 
-            //ShowAlcoholMenuCommand = new RelayCommand(o => CurrentView = new AlcoholViewControl());
-            //ShowOtherMenuCommand = new RelayCommand(o => CurrentView = new OtherViewControl());
-            //ShowUserProfileCommand = new RelayCommand(o => CurrentView = new UserProfileControl(), o => UserLoggedIn);
             LogoutCommand = new RelayCommand(o => Logout());
+
             TurnOffApp = new RelayCommand(o =>
             {
                 var qst = MessageBox.Show("Czy na pewno chcesz zakończyć działanie aplikacji?", "Wyjście z aplikacji", MessageBoxButton.YesNo, MessageBoxImage.Warning); 

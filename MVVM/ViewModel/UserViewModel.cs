@@ -10,6 +10,7 @@ using KCK_Project_WPF.MVVM.Core;
 using System.Windows.Input;
 using System.Windows;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
@@ -183,9 +184,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         #region Administrator Menu
 
-        private List<UserModel> adminUsers;
+        private ObservableCollection<UserModel> adminUsers;
 
-        public List<UserModel> AdminUsers
+        public ObservableCollection<UserModel> AdminUsers
         {
             get { return adminUsers; }
             set { adminUsers = value; OnPropertyChanged(); }
@@ -338,7 +339,36 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { adminAddUserType = value; OnPropertyChanged(); }
         }
 
+        private UserModel adminSelectedUserSave;
+        private UserModel adminSelectedUser;
+        public UserModel AdminSelectedUser
+        {
+            get => adminSelectedUser;
+            set
+            {
+                adminSelectedUser = value;
+                OnPropertyChanged(nameof(adminSelectedUser));
+                OnPropertyChanged(nameof(IsButtonEnabled));
+            }
+        }
 
+        public bool IsButtonEnabled => AdminSelectedUser != null;
+
+        private bool adminEditUserMenu;
+
+        public bool AdminEditUserMenu
+        {
+            get { return adminEditUserMenu; }
+            set { adminEditUserMenu = value; OnPropertyChanged(); }
+        }
+
+        private string adminEditUserTypeValue;
+
+        public string AdminEditUserTypeValue
+        {
+            get { return adminEditUserTypeValue; }
+            set { adminEditUserTypeValue = value; OnPropertyChanged(); }
+        }
 
         #endregion
 
@@ -375,6 +405,16 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand AdminAddUserCommand { get; set; }
         public ICommand AdminAddUserClearCommand { get; set; }
         public ICommand AdminAddUserRandomCommand { get; set; }
+
+        public ICommand AdminEditUserSubPageCommand { get; set; }
+        public ICommand AdminEditUserClearCommand { get; set; }
+        public ICommand AdminEditUserCommand { get; set; }
+        public ICommand AdminCloseEditUserSubPageCommand { get; set; }
+
+
+
+
+        public ICommand UserViewModelUnknownCommand { get; set; }
 
 
 
@@ -423,7 +463,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             AdminOrderTypeValue = AdminOrderType[0];
             AdminOrderBy = new() { "Domyślne sortowanie", "Id", "Nazwa użytkownika", "Email", "Typ użytkownika" };
             AdminOrderByValue = AdminOrderBy[0];
-            AdminUsers = GetAll();
+            AdminUsers = new(GetAll());
             AdminSearchDataType = new() { "Globalne wyszukiwanie", "Id", "Nazwa użytkownika", "Email", "Typ użytkownika" };
             AdminSearchDataTypeValue = AdminSearchDataType[0];
 
@@ -447,6 +487,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     {
                         AdminAddUserMenu = false;
                         AdminSearchMenu = false;
+
+                        AdminSelectedUser = null;
+
                         AdminRestartFiltersSubPageCommand?.Execute(this);
                         AdminAddUserClearCommand?.Execute(this);
                     }
@@ -844,7 +887,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             {
                 AdminOrderTypeValue = AdminOrderType[0];
                 AdminOrderByValue = AdminOrderBy[0];
-                AdminUsers = GetAll();
+                AdminUsers = new(GetAll());
                 AdminSearchDataTypeValue = AdminSearchDataType[0];
                 AdminSearchString = "";
             });
@@ -863,64 +906,64 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     {
                         if (AdminOrderBy[1] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderByDescending(x => x.Id).ToList();
+                            AdminUsers = new(GetAll().OrderByDescending(x => x.Id).ToList());
                         }
                         else if (AdminOrderBy[2] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderByDescending(x => x.Name).ToList();
+                            AdminUsers = new(GetAll().OrderByDescending(x => x.Name).ToList());
                         }
                         else if (AdminOrderBy[3] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderByDescending(x => x.Email).ToList();
+                            AdminUsers = new(GetAll().OrderByDescending(x => x.Email).ToList());
                         }
                         else if (AdminOrderBy[4] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderByDescending(x => x.TypeString).ToList();
+                            AdminUsers = new(GetAll().OrderByDescending(x => x.TypeString).ToList());
                         }
                     }
                     else
                     {
                         if (AdminOrderBy[1] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderBy(x => x.Id).ToList();
+                            AdminUsers = new(GetAll().OrderBy(x => x.Id).ToList());
                         }
                         else if (AdminOrderBy[2] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderBy(x => x.Name).ToList();
+                            AdminUsers = new(GetAll().OrderBy(x => x.Name).ToList());
                         }
                         else if (AdminOrderBy[3] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderBy(x => x.Email).ToList();
+                            AdminUsers = new(GetAll().OrderBy(x => x.Email).ToList());
                         }
                         else if (AdminOrderBy[4] == AdminOrderByValue)
                         {
-                            AdminUsers = GetAll().OrderBy(x => x.TypeString).ToList();
+                            AdminUsers = new(GetAll().OrderBy(x => x.TypeString).ToList());
                         }
                     }
                 }
-                else AdminUsers = GetAll();
+                else AdminUsers = new(GetAll());
 
                 if (!string.IsNullOrWhiteSpace(AdminSearchString))
                 {
                     if (AdminSearchDataTypeValue == AdminSearchDataType[0])
                     {
-                        AdminUsers = AdminUsers.Where(o => $"{o.Id} {o.Name} {o.Email} {o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                        AdminUsers = new(AdminUsers.Where(o => $"{o.Id} {o.Name} {o.Email} {o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList());
                     }
                     else if (AdminSearchDataTypeValue == AdminSearchDataType[1])
                     {
-                        AdminUsers = AdminUsers.Where(o => $"{o.Id}".Contains(AdminSearchString)).ToList();
+                        AdminUsers = new(AdminUsers.Where(o => $"{o.Id}".Contains(AdminSearchString)).ToList());
                     }
                     else if (AdminSearchDataTypeValue == AdminSearchDataType[2])
                     {
-                        AdminUsers = AdminUsers.Where(o => $"{o.Name}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                        AdminUsers = new(AdminUsers.Where(o => $"{o.Name}".ToLower().Contains(AdminSearchString.ToLower())).ToList());
                     }
                     else if (AdminSearchDataTypeValue == AdminSearchDataType[3])
                     {
-                        AdminUsers = AdminUsers.Where(o => $"{o.Email}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                        AdminUsers = new(AdminUsers.Where(o => $"{o.Email}".ToLower().Contains(AdminSearchString.ToLower())).ToList());
                     }
                     else if (AdminSearchDataTypeValue == AdminSearchDataType[4])
                     {
-                        AdminUsers = AdminUsers.Where(o => $"{o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList();
+                        AdminUsers = new(AdminUsers.Where(o => $"{o.TypeString}".ToLower().Contains(AdminSearchString.ToLower())).ToList());
                     }
                 }
 
@@ -993,12 +1036,30 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     errors.Add(true);
                 }
 
+                UserType userType = UserType.Anonymous;
 
-                // add user type 
+                // "Standardowy", "Moderator", "Administrator"
+                if (AdminAddUserType.Any(x => x == AdminAddUserTypeValue))
+                {
+                    switch (AdminAddUserTypeValue)
+                    {
+                        case "Standardowy":
+                            userType = UserType.Standard;
+                            break;
+                        case "Moderator":
+                            userType = UserType.Moderator;
+                            break;
+                        case "Administrator":
+                            userType = UserType.Administrator;
+                            break;
+                        default:
+                            messenges.Add($"- Wypełniono Typ użytkownika zmienną niedostępną w systemie użytkownik nie aktywny");
+                            errors.Add(true);
+                            userType = UserType.Anonymous;
+                            break;
 
-
-
-
+                    }
+                }
 
                 if (errors.Any(e => e == true))
                 {
@@ -1006,7 +1067,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
                 else
                 {
-                    var output = Add(new UserModel(AdminAddUserName, AdminAddUserProfilePicture, AdminAddUserEmail, AdminAddUserPassword, UserType.Standard));
+                    var output = Add(new UserModel(AdminAddUserName, AdminAddUserProfilePicture, AdminAddUserEmail, AdminAddUserPassword, userType));
 
                     switch (output)
                     {
@@ -1027,6 +1088,237 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     }
                 }
             });
+
+            AdminEditUserSubPageCommand = new RelayCommand(o =>
+            {
+                AdminAddUserMenu = false;
+                AdminSearchMenu = false;
+
+                if (AdminEditUserMenu)
+                {
+                    AdminEditUserMenu = false;
+                    AdminSelectedUser = null;
+                }
+                else
+                {
+                    AdminAddUserName = AdminSelectedUser.Name;
+                    AdminAddUserProfilePicture = AdminSelectedUser.ProfilePicture;
+                    AdminAddUserEmail = AdminSelectedUser.Email;
+                    AdminAddUserPassword = "";
+
+                    AdminEditUserMenu = true;
+                }
+
+                if (AdminSelectedUser != null)
+                    switch (AdminSelectedUser._Type)
+                    {
+                        case UserType.Anonymous:
+                            AdminEditUserTypeValue = AdminAddUserType[0];
+                            break;
+                        case UserType.Standard:
+                            AdminEditUserTypeValue = AdminAddUserType[0];
+                            break;
+                        case UserType.Moderator:
+                            AdminEditUserTypeValue = AdminAddUserType[1];
+                            break;
+                        case UserType.Administrator:
+                            AdminEditUserTypeValue = AdminAddUserType[2];
+                            break;
+                    }
+            });
+
+            AdminEditUserClearCommand = new RelayCommand(o =>
+            {
+                if (AdminSelectedUser != null)
+                {
+                    AdminAddUserName = "";
+                    AdminAddUserProfilePicture = "";
+                    AdminAddUserEmail = "";
+                    AdminAddUserPassword = "";
+
+                    switch (AdminSelectedUser._Type)
+                    {
+                        case UserType.Anonymous:
+                            AdminEditUserTypeValue = AdminAddUserType[0];
+                            break;
+                        case UserType.Standard:
+                            AdminEditUserTypeValue = AdminAddUserType[0];
+                            break;
+                        case UserType.Moderator:
+                            AdminEditUserTypeValue = AdminAddUserType[1];
+                            break;
+                        case UserType.Administrator:
+                            AdminEditUserTypeValue = AdminAddUserType[2];
+                            break;
+                    }
+                }
+
+            });
+
+            AdminEditUserCommand = new RelayCommand(o =>
+            {
+                List<string> messenges = new();
+                List<bool> errors = new();
+
+                if (AdminSelectedUser.Name != AdminAddUserName && !string.IsNullOrWhiteSpace(AdminAddUserName))
+                {
+                    var output = ChangeName(AdminSelectedUser.Id, AdminAddUserName);
+
+                    switch (output)
+                    {
+                        case 1:
+                            messenges.Add("- Wypełnij pole Nazwa użytkownika przed wysłaniem formularza!");
+                            errors.Add(true);
+                            break;
+                        case 2:
+                            messenges.Add("- Musisz posiadać uprawnienia Administratora aby dokonać zmian na innym użytkowniku!");
+                            errors.Add(true);
+                            break;
+                        case 3:
+                            messenges.Add("- Nazwa użytkownika jest już zajęta, użyj innej!");
+                            errors.Add(true);
+                            break;
+                        case 4:
+                            messenges.Add("- Użytkownik o podanym Id nie istnieje!");
+                            errors.Add(true);
+                            break;
+                        default:
+                            messenges.Add("- Pomyślnie zmieniono Nazwę użytkownika.");
+                            errors.Add(false);
+                            break;
+                    }
+                }
+
+                if (AdminSelectedUser.Email != AdminAddUserEmail && !string.IsNullOrWhiteSpace(AdminAddUserEmail))
+                {
+                    var output = ChangeEmail(AdminSelectedUser.Id, AdminAddUserEmail);
+
+                    switch (output)
+                    {
+                        case 1:
+                            messenges.Add("- Wypełnij pole E-mail przed wysłaniem formularza!");
+                            errors.Add(true);
+                            break;
+                        case 2:
+                            messenges.Add("- Musisz posiadać uprawnienia Administratora aby dokonać zmian na innym użytkowniku!");
+                            errors.Add(true);
+                            break;
+                        case 3:
+                            messenges.Add("- E-mail jest już zajęty, użyj innego!");
+                            errors.Add(true);
+                            break;
+                        case 4:
+                            messenges.Add("- Użytkownik o podanym Id nie istnieje!");
+                            errors.Add(true);
+                            break;
+                        case 5:
+                            messenges.Add("- Email nie posiada poprawnej składni e-mailu!");
+                            errors.Add(true);
+                            break;
+                        default:
+                            messenges.Add("- E-mail został pomyślnie zmieniony.");
+                            errors.Add(false);
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(AdminAddUserPassword))
+                {
+                    var output = ChangePassword(AdminSelectedUser.Id, AdminAddUserPassword);
+
+                    switch (output)
+                    {
+                        case 1:
+                            messenges.Add("- Wypełnij pole Hasło przed wysłaniem formularza!");
+                            errors.Add(true);
+                            break;
+                        case 2:
+                            messenges.Add("- Musisz posiadać uprawnienia Administratora aby dokonać zmian na innym użytkowniku!");
+                            errors.Add(true);
+                            break;
+                        case 3:
+                            messenges.Add("- Użytkownik o podanym Id nie istnieje!");
+                            errors.Add(true);
+                            break;
+                        case 4:
+                            messenges.Add("- Hasło nie posiada poprawnej składni hasła!");
+                            errors.Add(true);
+                            break;
+                        default:
+                            messenges.Add("- Hasło zostało pomyślnie zmienione.");
+                            errors.Add(false);
+                            break;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(AdminEditUserTypeValue))
+                {
+                    UserType userType = UserType.Anonymous;
+
+                    switch (AdminEditUserTypeValue)
+                    {
+                        case "Standardowy":
+                            userType = UserType.Standard;
+                            break;
+                        case "Moderator":
+                            userType = UserType.Moderator;
+                            break;
+                        case "Administrator":
+                            userType = UserType.Administrator;
+                            break;
+                        default:
+                            messenges.Add($"- Wypełniono Typ użytkownika zmienną niedostępną w systemie użytkownik nie aktywny.");
+                            errors.Add(true);
+                            userType = UserType.Anonymous;
+                            break;
+
+                    }
+
+                    if (AdminSelectedUser._Type != userType)
+                    {
+                        var output = ChangeUserType(AdminSelectedUser.Id, userType);
+
+                        switch (output)
+                        {
+                            case 1:
+                                messenges.Add("- Użytkownik o podanym Id nie istnieje!");
+                                errors.Add(true);
+                                break;
+                            case 2:
+                                messenges.Add("- Musisz posiadać uprawnienia Administratora aby dokonać zmian na innym użytkowniku!");
+                                errors.Add(true);
+                                break;
+                            case 3:
+                                messenges.Add("- Użytkownik o podanym Id nie istnieje!");
+                                errors.Add(true);
+                                break;
+                            default:
+                                messenges.Add("- Typ użytkownika został pomyślnie zmieniony.");
+                                errors.Add(false);
+                                break;
+                        }
+                    }
+                }
+
+                if (errors.Count == 0)
+                {
+                    AdminEditUserSubPageCommand.Execute(this);
+                    AdminUpdateFiltersReloadCommand.Execute(this);
+                    return;
+                }
+
+                if (errors.All(o => o == false))
+                {
+                    MessageBox.Show("Wszystkie zmiany zostały pomyślnie wykonane!", "Validator", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AdminEditUserSubPageCommand.Execute(this);
+                    AdminUpdateFiltersReloadCommand.Execute(this);
+                    return;
+                }
+                else MessageBox.Show(string.Join('\n', messenges), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            });
+
+            UserViewModelUnknownCommand = new RelayCommand(o => { MessageBox.Show("Sector Not Implemented!!!", "Validator", MessageBoxButton.OK, MessageBoxImage.Warning); });
 
             /*
             //EnterCommand = new RelayCommand(o => 
@@ -1246,7 +1538,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(newEmail)) return 1;
             if (CurrentUser != null && CurrentUser._Type != UserType.Administrator) return 2;
             if (_users.Where(u => u.Email.ToLower() == newEmail.ToLower()).Count() != 0) return 3;
-            if (!IsGoodEmail(newEmail)) return 1;
+            if (!IsGoodEmail(newEmail)) return 5;
 
             UserModel usr = _users.Where(u => u.Id == id).First();
 
@@ -1306,7 +1598,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             UserModel usr = _users.Where(u => u.Id == id).First();
 
-            if (usr == null) return 3;
+            if (usr == null) return 4;
 
             usr.Name = newName;
             Save();

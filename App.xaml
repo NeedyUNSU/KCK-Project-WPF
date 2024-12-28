@@ -8,18 +8,24 @@
     <Application.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-        
-        
+
+
         <DataTemplate DataType="{x:Type viewModel:DrinkViewModel}">
             <view:DrinkView/>
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type viewModel:UserViewModel}">
             <view:UserView/>
         </DataTemplate>
 
+        <Style x:Key="NonEditableTextStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Focusable" Value="True" />
+        </Style>
+
         <ResourceDictionary x:Key="v">
-            
+
 
 
         </ResourceDictionary>

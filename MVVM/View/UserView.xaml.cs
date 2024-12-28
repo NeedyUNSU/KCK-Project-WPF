@@ -1,4 +1,5 @@
-﻿using KCK_Project_WPF.MVVM.ViewModel;
+﻿using KCK_Project_WPF.MVVM.Model;
+using KCK_Project_WPF.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,30 @@ namespace KCK_Project_WPF.MVVM.View
         {
             InitializeComponent();
 
+        }
+
+        private MainWindowViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    return mainWindow.DataContext as MainWindowViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
+
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGrid dataGrid && dataGrid.SelectedItem != null)
+            {
+                MainContext.UserVM.AdminEditUserSubPageCommand.Execute(this);
+            }
         }
     }
 }
