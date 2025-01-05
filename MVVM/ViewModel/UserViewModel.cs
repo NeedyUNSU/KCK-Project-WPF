@@ -411,12 +411,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand AdminEditUserCommand { get; set; }
         public ICommand AdminCloseEditUserSubPageCommand { get; set; }
 
-
-
-
         public ICommand UserViewModelUnknownCommand { get; set; }
-
-
 
         private MainWindowViewModel MainContext
         {
@@ -499,7 +494,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 else
                 {
                     var index = Array.IndexOf(menuAppear, true);
-                    MessageBox.Show(index.ToString(), index.ToString());
+                   // MessageBox.Show(index.ToString(), index.ToString());
                     if (index > 1 && index <= 3)
                     {
                         DisplayMenuNumber(1);
@@ -527,13 +522,15 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             RegisterPage = new RelayCommand(o =>
             {
-                loginEmail = "";
-                loginPasswd = "";
+                LoginEmail = "";
+                LoginPassword = "";
                 DisplayMenuNumber(2);
             });
 
             ForgotAPasswordPage = new RelayCommand(o =>
             {
+                ForgotEmail = LoginEmail;
+                LoginPassword = "";
                 DisplayMenuNumber(3);
             });
 
@@ -568,7 +565,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             TryLogin = new RelayCommand(o =>
             {
-                if (string.IsNullOrWhiteSpace(loginEmail) || string.IsNullOrWhiteSpace(loginPasswd))
+                if (string.IsNullOrWhiteSpace(LoginEmail) || string.IsNullOrWhiteSpace(LoginPassword))
                 {
                     MessageBox.Show("Uzupełnij brakujące dane", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
@@ -586,16 +583,16 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 //    return;
                 //}
 
-                if (Login(loginEmail, loginPasswd) == 0)
+                if (Login(LoginEmail, LoginPassword) == 0)
                 {
                     BackToMainMenu.Execute(this);
-                    loginEmail = "";
-                    loginPasswd = "";
+                    LoginEmail = "";
+                    LoginPassword = "";
 
                     MainContext.UserLoggedIn = true;
 
-                    modifyEmail = CurrentUser.Email;
-                    modifyUsername = CurrentUser.Name;
+                    ModifyEmail = CurrentUser.Email;
+                    ModifyUsername = CurrentUser.Name;
 
                     return;
                 }
