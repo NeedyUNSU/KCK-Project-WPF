@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace KCK_Project_WPF.MVVM.Model
@@ -6,7 +8,7 @@ namespace KCK_Project_WPF.MVVM.Model
     [XmlRoot("Ingredient")]
     [XmlInclude(typeof(AlcoholModel))]
     [XmlInclude(typeof(OtherModel))]
-    public abstract class IngredientModel
+    public abstract class IngredientModel : INotifyPropertyChanged
     {
         [XmlElement("Name")]
         public string? Name { get; set; }
@@ -32,7 +34,25 @@ namespace KCK_Project_WPF.MVVM.Model
 
         public override string ToString()
         {
-            return $"{Name} - {Description}";
+            return $"{Name}";
+        }
+
+        private bool _isSelected;
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

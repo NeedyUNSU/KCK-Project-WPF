@@ -11,16 +11,147 @@ using System.Collections.ObjectModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
-    public class DrinkViewModel : BaseViewModel, INotifyPropertyChanged
+    public class DrinkViewModel : BaseViewModel
     {
         //public ICommand AddDrinkCommand { get; set; }
         //public ICommand UpdateDrinkCommand { get; set; }
         //public ICommand DeleteDrinkCommand { get; set; }
         //public ICommand FilterDrinksByNameCommand { get; set; }
         //public ICommand FilterDrinksByIngredientCommand { get; set; }
-        public ICommand DrinksOpenFiltersSubPageCommand { get; set; }
         public ICommand DrinksAddDrinkSubPageCommand { get; set; }
         public ICommand DrinksEditDrinkSubPageCommand { get; set; }
+        #region Filters
+
+        public ICommand DrinksOpenFiltersSubPageCommand { get; set; }
+        public ICommand DrinksRestartFiltersSubPageCommand { get; set; }
+        public ICommand DrinksUpdateFiltersReloadCommand { get; set; }
+
+        private bool drinkSearchMenu = false;
+
+        public bool DrinkSearchMenu
+        {
+            get { return drinkSearchMenu; }
+            set { drinkSearchMenu = value; OnPropertyChanged(); }
+        }
+
+        private List<String> drinkOrderType;
+
+        public List<String> DrinkOrderType
+        {
+            get { return drinkOrderType; }
+            set { drinkOrderType = value; OnPropertyChanged(); }
+        }
+
+        private string drinkOrderTypeValue;
+
+        public string DrinkOrderTypeValue
+        {
+            get { return drinkOrderTypeValue; }
+            set { drinkOrderTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> drinkOrderBy;
+
+        public List<string> DrinkOrderBy
+        {
+            get { return drinkOrderBy; }
+            set { drinkOrderBy = value; OnPropertyChanged(); }
+        }
+
+        private string drinkSearchString;
+
+        public string DrinkSearchString
+        {
+            get { return drinkSearchString; }
+            set { drinkSearchString = value; OnPropertyChanged(); }
+        }
+
+        private string drinkOrderByValue;
+
+        public string DrinkOrderByValue
+        {
+            get { return drinkOrderByValue; }
+            set { drinkOrderByValue = value; OnPropertyChanged(); }
+        }
+
+        private List<String> drinkSearchDataType;
+
+        public List<String> DrinkSearchDataType
+        {
+            get { return drinkSearchDataType; }
+            set { drinkSearchDataType = value; OnPropertyChanged(); }
+        }
+
+        private string drinkSearchDataTypeValue;
+
+        public string DrinkSearchDataTypeValue
+        {
+            get { return drinkSearchDataTypeValue; }
+            set { drinkSearchDataTypeValue = value; OnPropertyChanged(); }
+        }
+
+        //private List<string> drinkSearchByAlkohol;
+
+        //public List<string> DrinkSearchByAlkohol
+        //{
+        //    get { return drinkSearchByAlkohol; }
+        //    set { drinkSearchByAlkohol = value; OnPropertyChanged(); }
+        //}
+
+        //private string drinkSearchByAlkoholValue;
+
+        //public string DrinkSearchByAlkoholValue
+        //{
+        //    get { return drinkSearchByAlkoholValue; }
+        //    set { drinkSearchByAlkoholValue = value; OnPropertyChanged(); }
+        //}
+
+        //private List<string> drinkSearchByOther;
+
+        //public List<string> DrinkSearchByOther
+        //{
+        //    get { return drinkSearchByOther; }
+        //    set { drinkSearchByOther = value; OnPropertyChanged(); }
+        //}
+
+        //private string drinkSearchByOtherValue;
+
+        //public string DrinkSearchByOtherValue
+        //{
+        //    get { return drinkSearchByOtherValue; }
+        //    set { drinkSearchByOtherValue = value; OnPropertyChanged(); }
+        //}
+
+        private ObservableCollection<IngredientModel> drinkSearchByAlkohol;
+        public ObservableCollection<IngredientModel> DrinkSearchByAlkohol
+        {
+            get { return drinkSearchByAlkohol; }
+            set { drinkSearchByAlkohol = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<IngredientModel> drinkSearchByAlkoholValues;
+        public ObservableCollection<IngredientModel> DrinkSearchByAlkoholValues
+        {
+            get { return drinkSearchByAlkoholValues; }
+            set { drinkSearchByAlkoholValues = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<IngredientModel> drinkSearchByOther;
+        public ObservableCollection<IngredientModel> DrinkSearchByOther
+        {
+            get { return drinkSearchByOther; }
+            set { drinkSearchByOther = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<IngredientModel> drinkSearchByOtherValues;
+        public ObservableCollection<IngredientModel> DrinkSearchByOtherValues
+        {
+            get { return drinkSearchByOtherValues; }
+            set { drinkSearchByOtherValues = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
 
 
 
@@ -85,6 +216,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public DrinkViewModel(OtherViewModel otherViewModel, AlcoholViewModel alcoholViewModel)
         {
+            #region Base Part
+
             if (otherViewModel == null)
                 throw new ArgumentNullException(nameof(otherViewModel));
             if (alcoholViewModel == null)
@@ -100,7 +233,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             ing.Add(_otherViewModel.GetAll().FirstOrDefault(o => o.Name == "Limonka"));
             ing.Add(_otherViewModel.GetAll().FirstOrDefault(o => o.Name == "Sól"));
 
-        
+
             Add(new DrinkModel(
                 "Margarita",
                 "Klasyczny drink z tequilą.",
@@ -143,11 +276,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             ));
 
 
-            for(int i = 0; i < 500; i++)
+            for (int i = 0; i < 500; i++)
             {
                 var other = _otherViewModel.GetAll();
                 ing = new();
-                for (int j = 0; j < new Random().Next(1,3); j++)
+                for (int j = 0; j < new Random().Next(1, 3); j++)
                 {
                     ing.Add(_alcoholViewModel.Alcohols[new Random().Next(0, _alcoholViewModel.Alcohols.Count - 1)]);
                 }
@@ -160,13 +293,57 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     $"Drink_Name{i}",
                     "test.",
                     ing,
-                    ((float)Math.Round((new Random().NextDouble() + new Random().Next(1, 10)),1)),
+                    ((float)Math.Round((new Random().NextDouble() + new Random().Next(1, 10)), 1)),
                     _glassTypes[new Random().Next(0, _glassTypes.Count - 1)],
                     "Wszystkie składniki blenduj z lodem, a następnie przelej do szklanki."
                 ));
-            }
+            } 
+            #endregion
 
             DrinksCache = new(_drinksCache.ToList());
+
+            DrinkOrderType = new() { "Rosnąco", "Malejąco" };
+            DrinkOrderTypeValue = DrinkOrderType[0];
+            DrinkOrderBy = new() { "Domyślne sortowanie","Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składnik Alkocholowy", "Inny Składnik" };
+            DrinkOrderByValue = DrinkOrderBy[0];
+            //DrinkSearchDataType = new() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składnik Alkocholowy", "Inny Składnik" };
+            //DrinkSearchDataTypeValue = DrinkSearchDataType[0];
+            DrinkSearchByAlkohol = new(_alcoholViewModel.Alcohols);
+            DrinkSearchByOther = new(_otherViewModel.GetAll());
+
+            DrinksOpenFiltersSubPageCommand = new RelayCommand(o => 
+            {
+                if (DrinkSearchMenu)
+                {
+                    DrinkSearchMenu = false;
+                }
+                else
+                {
+                    DrinkSearchMenu = true;
+                }
+            });
+
+            DrinksRestartFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                DrinkSearchString = "";
+                DrinkOrderTypeValue = DrinkOrderType[0];
+                DrinkOrderByValue = DrinkOrderBy[0];
+                DrinkSearchByAlkoholValues = new();
+                DrinkSearchByOtherValues = new();
+
+                DrinkSearchByAlkohol = new(_alcoholViewModel.Alcohols);
+                foreach (var item in DrinkSearchByAlkohol.Where(x => x.IsSelected == true))
+                {
+                    item.IsSelected = false;
+                }
+
+                DrinkSearchByOther = new(_otherViewModel.GetAll());
+                foreach (var item in DrinkSearchByOther.Where(x => x.IsSelected == true))
+                {
+                    item.IsSelected = false;
+                }
+                //DrinkSearchDataTypeValue = DrinkSearchDataType[0];
+            });
 
             //AddDrinkCommand = new RelayCommand(o => {
             //    //MessageBox.Show("Simple MessageBox", "Simple MessageBox");

@@ -57,7 +57,7 @@
                         <DataGridTextColumn Header="Ocena" Binding="{Binding Rating}" Width="0.5*" 
                             IsReadOnly="True" 
                             ElementStyle="{StaticResource NonEditableTextStyle}">
-                            
+
                         </DataGridTextColumn>
                         <DataGridTemplateColumn Header="Alkohol" Width="2*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -97,46 +97,106 @@
 
                 <Button Content="Powrót" Command="{Binding BackToMainMenu}" Margin="5"/>
             </StackPanel>
-            <!--<Grid Visibility="{Binding AdminSearchMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Visibility="{Binding DrinkSearchMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
+                <Border Grid.Column="1" Grid.ColumnSpan="5" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
                     <StackPanel VerticalAlignment="Center" Background="White">
                         <Grid>
                             <TextBlock Text="Filtry" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
-                            <Button Content="X" Command="{Binding AdminCloseFiltersSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
+                            <Button Content="X" Command="{Binding DrinksOpenFiltersSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
                         </Grid>
                         <Border BorderThickness="1px" BorderBrush="Black" Padding="0,10,0,0" Margin="10,0,10,0">
                             <StackPanel>
                                 <TextBlock Text="Ustawienia Sortowania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
                                 <TextBlock Text="* Sortowanie" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox ItemsSource="{Binding AdminOrderType}" SelectedValue="{Binding AdminOrderTypeValue}" Margin="10,0,10,10"/>
+                                <ComboBox ItemsSource="{Binding DrinkOrderType}" SelectedValue="{Binding DrinkOrderTypeValue}" Margin="10,0,10,10"/>
                                 <TextBlock Text="* Sortuj przez" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox ItemsSource="{Binding AdminOrderBy}" SelectedValue="{Binding AdminOrderByValue}" Margin="10,0,10,10"/>
+                                <ComboBox ItemsSource="{Binding DrinkOrderBy}" SelectedValue="{Binding DrinkOrderByValue}" Margin="10,0,10,10"/>
                             </StackPanel>
                         </Border>
 
                         <Border BorderThickness="1px" BorderBrush="Black" Padding="0,10,0,0" Margin="10,10,10,10">
-                            <StackPanel>
-                                <TextBlock Text="Ustawienia wyszukiwania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <TextBlock Text="* Wyszukaj ciąg znaków" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <TextBox Text="{Binding AdminSearchString}" Margin="10,0,10,10"/>
-                                <TextBlock Text="* Wyszukaj przez zmienną" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                                <ComboBox SelectedValue="{Binding AdminSearchDataTypeValue}" ItemsSource="{Binding AdminSearchDataType}" Margin="10,0,10,10"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Ustawienia wyszukiwania" HorizontalAlignment="Center" FontWeight="Bold" FontSize="10" Margin="10,0,0,10" />
+
+                                <StackPanel Grid.Row="1">
+                                    <TextBlock Text="* Wyszukaj ciąg znaków" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                    <TextBox Text="{Binding DrinkSearchString}" Margin="10,0,10,10"/>
+                                    <TextBlock Text="* Wyszukaj przez zmienną" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                    <ComboBox SelectedValue="{Binding DrinkSearchDataTypeValue}" ItemsSource="{Binding DrinkSearchDataType}" Margin="10,0,10,10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                    <TextBlock Text="* Wyszukaj przez składnik alkocholowy" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                    <!--<ComboBox SelectedValue="{Binding DrinkSearchByAlkoholValue}" ItemsSource="{Binding DrinkSearchByAlkohol}" Margin="10,0,10,10"/>-->
+                                    <ComboBox IsReadOnly="True" StaysOpenOnEdit="True" Margin="10,0,10,10">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox Content="{Binding Name}" 
+                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <ComboBox.ItemsSource>
+                                            <Binding Path="DrinkSearchByAlkohol" />
+                                        </ComboBox.ItemsSource>
+                                    </ComboBox>
+                                    <TextBlock Text="* Wyszukaj przez inny składnik" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                    <!--<ComboBox SelectedValue="{Binding DrinkSearchByOtherValue}" ItemsSource="{Binding DrinkSearchByOther}" Margin="10,0,10,10"/>-->
+                                    <ComboBox IsReadOnly="True" StaysOpenOnEdit="True" Margin="10,0,10,10">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox Content="{Binding Name}" 
+IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <ComboBox.ItemsSource>
+                                            <Binding Path="DrinkSearchByOther" />
+                                        </ComboBox.ItemsSource>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+
+
                         </Border>
 
-                        <Button Content="Resetuj Filtry" Command="{Binding AdminRestartFiltersSubPageCommand}" Margin="10,0,10,10"/>
-                        <Button Content="Zastosuj Filtry" Command="{Binding AdminUpdateFiltersReloadCommand}" Margin="10,0,10,10"/>
+                        <Button Content="Resetuj Filtry" Command="{Binding DrinksRestartFiltersSubPageCommand}" Margin="10,0,10,10"/>
+                        <Button Content="Zastosuj Filtry" Command="{Binding DrinksUpdateFiltersReloadCommand}" Margin="10,0,10,10"/>
 
                     </StackPanel>
                 </Border>
 
-            </Grid>-->
+            </Grid>
 
             <!--<Grid Visibility="{Binding AdminAddUserMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
