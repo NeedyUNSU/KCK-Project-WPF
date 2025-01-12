@@ -431,13 +431,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
 
 
-        private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
+        //private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
 
-        public bool[] MenuAppear
-        {
-            get { return menuAppear; }
-            set { menuAppear = value; OnPropertyChanged(); }
-        }
+        //public bool[] MenuAppear
+        //{
+        //    get { return menuAppear; }
+        //    set { menuAppear = value; OnPropertyChanged(); }
+        //}
 
         public UserViewModel()
         {
@@ -1327,13 +1327,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             //});*/
         }
 
-        private void DisplayMenuNumber(int poz = 0)
-        {
-            if (poz >= MenuAppear.Length) return;
-            var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
-            buf[poz] = true;
-            MenuAppear = buf;
-        }
+        //private new void DisplayMenuNumber(int poz = 0)
+        //{
+        //    if (poz >= MenuAppear.Length) return;
+        //    var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
+        //    buf[poz] = true;
+        //    MenuAppear = buf;
+        //}
 
         private string GeneratePassword(int length = 12)
         {
