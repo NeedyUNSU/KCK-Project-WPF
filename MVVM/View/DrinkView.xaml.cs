@@ -25,5 +25,31 @@ namespace KCK_Project_WPF.MVVM.View
         {
             InitializeComponent();
         }
+
+        private MainWindowViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    return mainWindow.DataContext as MainWindowViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
+
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(!MainContext.UserVM.CurrentUserIsModerator()) return;
+
+            if (sender is DataGrid dataGrid && dataGrid.SelectedItem != null)
+            {
+                MainContext.DrinkVM.DrinksEditDrinkSubPageCommand.Execute(dataGrid.SelectedItem);
+            }
+        }
     }
 }

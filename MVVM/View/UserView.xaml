@@ -216,7 +216,7 @@
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
         </StackPanel>
 
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[6], Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding MenuAppear[6], Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="Menu Moderatora 6" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -224,46 +224,48 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
 
                 <Border Grid.Column="0" BorderThickness="1px" BorderBrush="Black" Margin="10,10,10,10">
                     <StackPanel>
-                        <Label>Ustawienia Drinków:</Label>
-                        <Button Content="Dodaj drinka" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Zaktualizuj drinka" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Usuń drinka" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-
-
+                        <Label Content="Uprawnienia Drinków:" FontSize="12" FontWeight="Black" Margin="5,0,0,0"/>
+                        <Label Content="* Dodaj drinka" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Zaktualizuj drinka" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Usuń drinka" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
+                <Button Content="Zarządzaj Drinkami" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
 
                 <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" Margin="10,10,10,10">
                     <StackPanel>
-                        <Label>Ustawienia Składników:</Label>
-
-                        <Button Content="Dodaj składnik" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Usuń składnik" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Edytuj składnik" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Dodaj nowy typ składnika" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Usuń typ składnika" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-
+                        <Label Content="Uprawnienia Składników:" FontSize="12" FontWeight="Black" Margin="5,0,0,0"/>
+                        <Label Content="* Dodaj składnik" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Usuń składnik" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Edytuj składnik" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Dodaj nowy typ składnika" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Usuń typ składnika" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
+                <Button Content="Zarządzaj Składnikami" Grid.Column="1" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
 
                 <Border Grid.Column="2" BorderThickness="1px" BorderBrush="Black" Margin="10,10,10,10">
                     <StackPanel>
-                        <Label>Ustawienia Alkocholu:</Label>
-                        <Button Content="Dodaj alkohol" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Usuń alkohol" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Edytuj alkohol" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Dodaj nowy typ alkoholu" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
-                        <Button Content="Usuń typ alkoholu" Command="{Binding UserViewModelUnknownCommand}" Margin="5"/>
 
-
+                        <Label Content="Uprawnienia Alkocholu:" FontSize="12" FontWeight="Black" Margin="5,0,0,0"/>
+                        <Label Content="* Dodaj alkohol" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Usuń alkohol" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Edytuj alkohol" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Dodaj nowy typ alkoholu" FontSize="10" Margin="5,0,0,0"/>
+                        <Label Content="* Usuń typ alkoholu" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
+                <Button Content="Zarządzaj Alkocholem" Grid.Column="2" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
             </Grid>
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
+            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="0,15,0,15"/>
         </StackPanel>
 
         <Grid Margin="20" Visibility="{Binding MenuAppear[7], Converter={StaticResource BooleanToVisibilityConverter}}">

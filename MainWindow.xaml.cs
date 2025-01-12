@@ -35,13 +35,33 @@ namespace KCK_Project_WPF
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MainContext.UserVM.UpdateMaxHeight();
+            UpdateDynamicHeight();
         }
 
         public MainWindow()
         {
             this.DataContext = new MainWindowViewModel();
             InitializeComponent();
+            this.StateChanged += MainWindow_StateChanged;
+        }
+
+        private void UpdateDynamicHeight()
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                MainContext.UserVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
+                MainContext.DrinkVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
+            }
+            else
+            {
+                MainContext.UserVM.UpdateMaxHeight();
+                MainContext.DrinkVM.UpdateMaxHeight();
+            }
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            UpdateDynamicHeight();
         }
     }
 }

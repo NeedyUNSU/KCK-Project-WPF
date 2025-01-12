@@ -8,6 +8,8 @@
     <Application.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <local:AlcoholFilterConverter x:Key="AlcoholFilterConverter"/>
+        <local:OtherFilterConverter x:Key="OtherFilterConverter"/>
 
 
         <DataTemplate DataType="{x:Type viewModel:DrinkViewModel}">
@@ -19,8 +21,9 @@
         </DataTemplate>
 
         <Style x:Key="NonEditableTextStyle" TargetType="TextBlock">
-            <Setter Property="TextWrapping" Value="NoWrap" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextTrimming" Value="None" />
+            <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Focusable" Value="True" />
         </Style>
 

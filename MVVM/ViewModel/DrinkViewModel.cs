@@ -7,27 +7,25 @@ using KCK_Project_WPF.MVVM.Core;
 using System.Windows.Input;
 using System.Windows;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
     public class DrinkViewModel : BaseViewModel, INotifyPropertyChanged
     {
-        public ICommand AddDrinkCommand { get; set; }
-        public ICommand UpdateDrinkCommand { get; set; }
-        public ICommand DeleteDrinkCommand { get; set; }
-        public ICommand FilterDrinksByNameCommand { get; set; }
-        public ICommand FilterDrinksByIngredientCommand { get; set; }
+        //public ICommand AddDrinkCommand { get; set; }
+        //public ICommand UpdateDrinkCommand { get; set; }
+        //public ICommand DeleteDrinkCommand { get; set; }
+        //public ICommand FilterDrinksByNameCommand { get; set; }
+        //public ICommand FilterDrinksByIngredientCommand { get; set; }
+        public ICommand DrinksOpenFiltersSubPageCommand { get; set; }
+        public ICommand DrinksAddDrinkSubPageCommand { get; set; }
+        public ICommand DrinksEditDrinkSubPageCommand { get; set; }
+
+
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
-
-        private bool[] menuAppear = { true, false, false, false, false, false, false, false, false, false };
-
-        public bool[] MenuAppear
-        {
-            get { return menuAppear; }
-            set { menuAppear = value; OnPropertyChanged(); }
-        }
 
         private bool userIsModerator = false;
 
@@ -37,6 +35,46 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { userIsModerator = value; OnPropertyChanged(); }
         }
 
+        private double maxHeight = 230;
+
+        public double MaxHeight
+        {
+            get { return maxHeight; }
+            set { maxHeight = value; OnPropertyChanged(); }
+        }
+
+        public void UpdateMaxHeight()
+        {
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            MaxHeight = mainWindow.Height - 180;
+        }
+
+        public void UpdateMaxHeight(int size)
+        {
+            MaxHeight = size - 180;
+        }
+
+        private DrinkModel drinkSelected;
+        public DrinkModel DrinkSelected
+        {
+            get => drinkSelected;
+            set
+            {
+                drinkSelected = value;
+                OnPropertyChanged(nameof(drinkSelected));
+                OnPropertyChanged(nameof(IsButtonEnabled));
+            }
+        }
+
+        public bool IsButtonEnabled => DrinkSelected != null;
+
+        private ObservableCollection<DrinkModel> drinksCache;
+
+        public ObservableCollection<DrinkModel> DrinksCache
+        {
+            get { return drinksCache; }
+            set { drinksCache = value; OnPropertyChanged(); }
+        }
 
 
         private const string GlassTypesFile = "glassTypes.txt";
@@ -122,35 +160,37 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     $"Drink_Name{i}",
                     "test.",
                     ing,
-                    ((float)(new Random().NextDouble() + new Random().Next(1, 11))),
+                    ((float)Math.Round((new Random().NextDouble() + new Random().Next(1, 10)),1)),
                     _glassTypes[new Random().Next(0, _glassTypes.Count - 1)],
                     "Wszystkie składniki blenduj z lodem, a następnie przelej do szklanki."
                 ));
             }
 
-            AddDrinkCommand = new RelayCommand(o => {
-                //MessageBox.Show("Simple MessageBox", "Simple MessageBox");
-                DisplayMenuNumber(1);
-            });
+            DrinksCache = new(_drinksCache.ToList());
 
-            UpdateDrinkCommand = new RelayCommand(o =>
-            {
-                DisplayMenuNumber(2);
-            });
+            //AddDrinkCommand = new RelayCommand(o => {
+            //    //MessageBox.Show("Simple MessageBox", "Simple MessageBox");
+            //    DisplayMenuNumber(1);
+            //});
 
-            DeleteDrinkCommand = new RelayCommand(o => 
-            { 
-                DisplayMenuNumber(3);
-            });
+            //UpdateDrinkCommand = new RelayCommand(o =>
+            //{
+            //    DisplayMenuNumber(2);
+            //});
 
-            FilterDrinksByNameCommand = new RelayCommand(o => 
-            {
-                DisplayMenuNumber(4);
-            });
-            FilterDrinksByIngredientCommand = new RelayCommand(o => 
-            {
-                DisplayMenuNumber(5);
-            });
+            //DeleteDrinkCommand = new RelayCommand(o => 
+            //{ 
+            //    DisplayMenuNumber(3);
+            //});
+
+            //FilterDrinksByNameCommand = new RelayCommand(o => 
+            //{
+            //    DisplayMenuNumber(4);
+            //});
+            //FilterDrinksByIngredientCommand = new RelayCommand(o => 
+            //{
+            //    DisplayMenuNumber(5);
+            //});
 
             BackToMenu = new RelayCommand(o =>
             {
@@ -169,14 +209,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     mainViewModel.CurrentView = null;
                 }
             });
-        }
-
-        private void DisplayMenuNumber(int poz = 0)
-        {
-            if (poz >= MenuAppear.Length) return;
-            var buf = Enumerable.Repeat(false, MenuAppear.Length).ToArray();
-            buf[poz] = true;
-            MenuAppear = buf;
         }
 
         public List<DrinkModel> Load()

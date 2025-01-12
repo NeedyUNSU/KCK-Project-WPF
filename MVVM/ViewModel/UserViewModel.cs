@@ -206,6 +206,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             MaxHeight = mainWindow.Height - 180;
         }
 
+        public void UpdateMaxHeight(int size)
+        {
+            MaxHeight = size - 180;
+        }
+
         private bool adminSearchMenu = false;
 
         public bool AdminSearchMenu
