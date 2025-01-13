@@ -175,8 +175,7 @@
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <CheckBox Content="{Binding Name}" 
-IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
@@ -231,30 +230,101 @@ IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
 
             <Grid Visibility="{Binding EditMenu, Converter={StaticResource BooleanToVisibilityConverter}}" Background="White" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.2*"/>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.2*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
+                <Border Grid.Column="1" Grid.ColumnSpan="2" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
                     <StackPanel VerticalAlignment="Center" Background="White">
                         <Grid>
-                            <TextBlock Text="Edytuj użytkownika" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
+                            <TextBlock Text="Edytuj Drinka" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
                             <Button Content="X" Command="{Binding DrinksEditDrinkSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
                         </Grid>
-                        <TextBlock Text="* Nazwa użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserName}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Zdjęcie Profilowe" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserProfilePicture}" Margin="10,0,10,10" IsEnabled="False"/>
-                        <TextBlock Text="* E-mail" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
-                        <TextBox Text="{Binding AdminAddUserEmail}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Hasło" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBlock Text=" Leave blank to do not set new password" HorizontalAlignment="left" FontWeight="Light" FontSize="8" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserPassword}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Wybierz typ użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <ComboBox SelectedValue="{Binding AdminEditUserTypeValue}" ItemsSource="{Binding AdminAddUserType}" Margin="10,0,10,10"/>
-                        <Button Content="Wyczyść" Command="{Binding AdminEditUserClearCommand}" Margin="10,0,10,10"/>
-                        <Button Content="Zapisz zmiany" Command="{Binding AdminEditUserCommand}" Margin="10,0,10,10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Grid.Column="1" Text="* Nazwa Drinka" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBox Grid.Column="1" Text="{Binding DrinkName}" Margin="10,0,10,10"/>
+                                <TextBlock Text="* Opis" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBox Text="{Binding DrinkDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,10,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+
+                                <TextBlock Text="* Typ szkła do podania" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
+                                <ComboBox SelectedValue="{Binding DrinkGlassTypeValue}" ItemsSource="{Binding DrinkGlassType}" Margin="10,0,10,10"/>
+
+                                <TextBlock Text="* Opis metody przygotowywania" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <TextBox Text="{Binding DrinkPreparationMethod}" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,10,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+
+                                <TextBlock Text="* Ocena Drinka" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,10">
+                                    <TextBlock Text="{Binding DrinkRating, StringFormat=F1}" VerticalAlignment="Center" FontSize="15" Margin="10,0,10,10" />
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Slider Value="{Binding DrinkRating}" Minimum="1" Maximum="10" TickFrequency="0.1" IsSnapToTickEnabled="True" HorizontalContentAlignment="Stretch" Width="230"/>
+
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Grid.Row="1" VerticalAlignment="Bottom" Content="Wyczyść" Command="{Binding DrinksClearEditCommand}" Margin="10,0,10,10"/>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="* Alkochole potrzebne do wykonania" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
+                                <ComboBox IsReadOnly="True" StaysOpenOnEdit="True" Margin="10,0,10,10">
+                                    <ComboBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ComboBox.ItemsPanel>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                    <ComboBox.ItemsSource>
+                                        <Binding Path="DrinkAddAlkoholIngredient" />
+                                    </ComboBox.ItemsSource>
+                                </ComboBox>
+                                <TextBlock Text="{Binding AlkoholsList}" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
+                                
+                                <TextBlock Text="* Inne składniki " HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
+                                <ComboBox IsReadOnly="True" StaysOpenOnEdit="True" Margin="10,0,10,10">
+                                    <ComboBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ComboBox.ItemsPanel>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                    <ComboBox.ItemsSource>
+                                        <Binding Path="DrinkAddOtherIngredient" />
+                                    </ComboBox.ItemsSource>
+                                </ComboBox>
+                                <TextBlock Text="{Binding OthersList}" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
+
+                            </StackPanel>
+                            
+                            <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Content="Zapisz zmiany" Command="{Binding DrinksSaveEditCommand}" Margin="10,0,10,10"/>
+
+                        </Grid>
+
+
+
                     </StackPanel>
                 </Border>
             </Grid>

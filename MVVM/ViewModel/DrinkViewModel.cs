@@ -13,11 +13,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 {
     public class DrinkViewModel : BaseViewModel
     {
-        //public ICommand AddDrinkCommand { get; set; }
-        //public ICommand UpdateDrinkCommand { get; set; }
-        //public ICommand DeleteDrinkCommand { get; set; }
-        //public ICommand FilterDrinksByNameCommand { get; set; }
-        //public ICommand FilterDrinksByIngredientCommand { get; set; }
         public ICommand DrinksAddDrinkSubPageCommand { get; set; }
         public ICommand DrinksEditDrinkSubPageCommand { get; set; }
         #region Filters
@@ -151,6 +146,22 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         }
 
         #endregion
+
+        private float drinkRating;
+
+        public float DrinkRating
+        {
+            get { return drinkRating; }
+            set { drinkRating = value; OnPropertyChanged(); }
+        }
+
+
+
+
+
+
+
+
 
         private bool editMenu = false;
 
@@ -341,6 +352,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 {
                     DrinkSearchMenu = false;
                     EditMenu = false;
+                    DrinkSelected = null;
                 }
                 else
                 {
