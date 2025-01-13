@@ -132,7 +132,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private ObservableCollection<IngredientModel> drinkSearchByAlkoholValues;
         public ObservableCollection<IngredientModel> DrinkSearchByAlkoholValues
         {
-            get { return drinkSearchByAlkoholValues; }
+            get { return new(DrinkSearchByAlkohol.Where(o => o.IsSelected).ToList()); }
             set { drinkSearchByAlkoholValues = value; OnPropertyChanged(); }
         }
 
@@ -146,13 +146,19 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private ObservableCollection<IngredientModel> drinkSearchByOtherValues;
         public ObservableCollection<IngredientModel> DrinkSearchByOtherValues
         {
-            get { return drinkSearchByOtherValues; }
+            get { return new(drinkSearchByOther.Where(o=>o.IsSelected).ToList()); }
             set { drinkSearchByOtherValues = value; OnPropertyChanged(); }
         }
 
         #endregion
 
+        private bool editMenu = false;
 
+        public bool EditMenu
+        {
+            get { return editMenu; }
+            set { editMenu = value; OnPropertyChanged(); }
+        }
 
 
         public ICommand BackToMainMenu { get; set; }
@@ -199,6 +205,9 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public bool IsButtonEnabled => DrinkSelected != null;
 
+
+
+
         private ObservableCollection<DrinkModel> drinksCache;
 
         public ObservableCollection<DrinkModel> DrinksCache
@@ -210,7 +219,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         private const string GlassTypesFile = "glassTypes.txt";
         private List<DrinkModel> _drinksCache;
-        private OtherViewModel _otherViewModel; 
+        private OtherViewModel _otherViewModel;
         private AlcoholViewModel _alcoholViewModel;
         private List<string> _glassTypes;
 
@@ -297,29 +306,46 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     _glassTypes[new Random().Next(0, _glassTypes.Count - 1)],
                     "Wszystkie składniki blenduj z lodem, a następnie przelej do szklanki."
                 ));
-            } 
+            }
             #endregion
 
             DrinksCache = new(_drinksCache.ToList());
 
             DrinkOrderType = new() { "Rosnąco", "Malejąco" };
             DrinkOrderTypeValue = DrinkOrderType[0];
-            DrinkOrderBy = new() { "Domyślne sortowanie","Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składnik Alkocholowy", "Inny Składnik" };
+            DrinkOrderBy = new() { "Domyślne sortowanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena" }; // "Składnik Alkocholowy", "Inny Składnik"
             DrinkOrderByValue = DrinkOrderBy[0];
-            //DrinkSearchDataType = new() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składnik Alkocholowy", "Inny Składnik" };
-            //DrinkSearchDataTypeValue = DrinkSearchDataType[0];
+            DrinkSearchDataType = new() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składniki"};
+            DrinkSearchDataTypeValue = DrinkSearchDataType[0];
             DrinkSearchByAlkohol = new(_alcoholViewModel.Alcohols);
             DrinkSearchByOther = new(_otherViewModel.GetAll());
 
-            DrinksOpenFiltersSubPageCommand = new RelayCommand(o => 
+            DrinksOpenFiltersSubPageCommand = new RelayCommand(o =>
             {
                 if (DrinkSearchMenu)
                 {
                     DrinkSearchMenu = false;
+                    EditMenu = false;
                 }
                 else
                 {
                     DrinkSearchMenu = true;
+                    EditMenu = false;
+                }
+            });
+
+            DrinksEditDrinkSubPageCommand = new RelayCommand(o =>
+            {
+                if (DrinkSelected == null) return;
+                 if (EditMenu)
+                {
+                    DrinkSearchMenu = false;
+                    EditMenu = false;
+                }
+                else
+                {
+                    EditMenu = true;
+                    DrinkSearchMenu = false;
                 }
             });
 
@@ -343,7 +369,175 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     item.IsSelected = false;
                 }
                 //DrinkSearchDataTypeValue = DrinkSearchDataType[0];
+
+                DrinksUpdateFiltersReloadCommand?.Execute(this);
             });
+
+            DrinksUpdateFiltersReloadCommand = new RelayCommand(o =>
+            {
+                //MessageBox.Show(string.Join("\n", DrinkSearchByOther.Where(o => o.IsSelected)), "Simple MessageBox");
+
+                DrinksCache = new(GetAll());
+
+                if (DrinkOrderTypeValue == DrinkOrderType[0])
+                {
+                    if (DrinkOrderByValue == DrinkOrderBy[1])
+                    {
+                        DrinksCache = new(DrinksCache.OrderBy(o=>o.Name).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[2])
+                    {
+                        DrinksCache = new(DrinksCache.OrderBy(o => o.Description).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[3])
+                    {
+                        DrinksCache = new(DrinksCache.OrderBy(o => o.GlassType).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[4])
+                    {
+                        DrinksCache = new(DrinksCache.OrderBy(o => o.PreparationMethod).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[5])
+                    {
+                        DrinksCache = new(DrinksCache.OrderBy(o => o.Rating).ToList());
+                    }
+                    //else if (DrinkOrderByValue == DrinkOrderBy[6])
+                    //{
+                    //    DrinksCache = new(DrinksCache.OrderBy(o => o.Ingredients.Where(p=>p is AlcoholModel).Select(q=>q.Name)).ToList());
+                    //}
+                    //else if (DrinkOrderByValue == DrinkOrderBy[7])
+                    //{
+                    //    DrinksCache = new(DrinksCache.OrderBy(o => o.Ingredients.Where(p => p is OtherModel).Select(q => q.Name)).ToList());
+                    //}
+                }
+                else
+                {
+                    if (DrinkOrderByValue == DrinkOrderBy[1])
+                    {
+                        DrinksCache = new(DrinksCache.OrderByDescending(o => o.Name).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[2])
+                    {
+                        DrinksCache = new(DrinksCache.OrderByDescending(o => o.Description).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[3])
+                    {
+                        DrinksCache = new(DrinksCache.OrderByDescending(o => o.GlassType).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[4])
+                    {
+                        DrinksCache = new(DrinksCache.OrderByDescending(o => o.PreparationMethod).ToList());
+                    }
+                    else if (DrinkOrderByValue == DrinkOrderBy[5])
+                    {
+                        DrinksCache = new(DrinksCache.OrderByDescending(o => o.Rating).ToList());
+                    }
+                    //else if (DrinkOrderByValue == DrinkOrderBy[6])
+                    //{
+                    //    DrinksCache = new(DrinksCache.OrderByDescending(o => o.Ingredients.Where(p => p is AlcoholModel).OrderByDescending(q => q.Name)).ToList());
+                    //}
+                    //else if (DrinkOrderByValue == DrinkOrderBy[7])
+                    //{
+                    //    DrinksCache = new(DrinksCache.OrderByDescending(o => o.Ingredients.Where(p => p is OtherModel).OrderByDescending(q => q.Name)).ToList());
+                    //}
+                }
+
+                if(!string.IsNullOrWhiteSpace(DrinkSearchString))
+                {
+                    if (DrinkSearchDataTypeValue == DrinkSearchDataType[0])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.Name} {o.Description} {o.GlassType} {o.PreparationMethod} {o.Rating} {string.Join(" ", o.Ingredients.Select(p => p.Name))}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[1])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.Name}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[2])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.Description}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[3])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.GlassType}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[4])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.PreparationMethod}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[5])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{o.Rating}".Contains(DrinkSearchString)).ToList());
+                    }
+                    else if (DrinkSearchDataTypeValue == DrinkSearchDataType[6])
+                    {
+                        DrinksCache = new(DrinksCache.Where(o => $"{string.Join(" ", o.Ingredients.Select(p => p.Name))}".Contains(DrinkSearchString)).ToList());
+                    }
+                }
+
+                if (DrinkSearchByAlkohol.Any(o=>o.IsSelected))
+                {
+                    ObservableCollection<DrinkModel> buf = new ObservableCollection<DrinkModel>();
+                    ObservableCollection<DrinkModel> buffer = new ObservableCollection<DrinkModel>();
+
+                    bool firstrun = false;
+                    foreach (var requiredIngre in DrinkSearchByAlkoholValues)
+                    {
+                        buf = new ObservableCollection<DrinkModel>();
+                        foreach (var drink in DrinksCache)
+                        {
+                            foreach (var ingredient in drink.Ingredients)
+                            {
+                                if (requiredIngre.Name == ingredient.Name)
+                                {
+                                    buf.Add(drink);
+                                }
+                            }
+                        }
+                        if (!firstrun)
+                        {
+                            firstrun = true;
+                            buffer = new ObservableCollection<DrinkModel>(buf);
+                        }
+                        else
+                            buffer = new(buffer.Intersect(buf));
+                    }
+
+                    DrinksCache = buffer;
+                }
+
+                if (DrinkSearchByOtherValues.Count != 0)
+                {
+                    ObservableCollection<DrinkModel> buf = new ObservableCollection<DrinkModel>();
+                    ObservableCollection<DrinkModel> buffer = new ObservableCollection<DrinkModel>();
+
+                    bool firstrun = false;
+                    foreach (var requiredIngre in DrinkSearchByOtherValues)
+                    {
+                        buf = new ObservableCollection<DrinkModel>();
+                        foreach (var drink in DrinksCache)
+                        {
+                            foreach (var ingredient in drink.Ingredients)
+                            {
+                                if (requiredIngre.Name == ingredient.Name)
+                                {
+                                    buf.Add(drink);
+                                }
+                            }
+                        }
+                        if(!firstrun)
+                        {
+                            firstrun=true;
+                            buffer = new ObservableCollection<DrinkModel>(buf);
+                        }
+                        else
+                            buffer = new(buffer.Intersect(buf));
+                    }
+                    
+                    DrinksCache = buffer;
+                }
+            });
+
+            
 
             //AddDrinkCommand = new RelayCommand(o => {
             //    //MessageBox.Show("Simple MessageBox", "Simple MessageBox");
@@ -411,7 +605,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public int Add(DrinkModel drink)
         {
             if (_drinksCache.Any(d => d.Name.Equals(drink.Name, StringComparison.OrdinalIgnoreCase)))
-                return -1; 
+                return -1;
             _drinksCache.Add(drink);
             Save();
             return 1;
@@ -444,21 +638,21 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         {
             List<string> rodzajeSzklanek = new List<string>
             {
-                "Szklanka wysoka (Highball)",       
-                "Szklanka niska (Old Fashioned)",   
-                "Kieliszek do martini",             
-                "Kieliszek do szampana (Flute)",    
-                "Kieliszek do wina",                
-                "Kufel do piwa",                    
-                "Kieliszek do shotów",              
-                "Szklanka do piwa (Pint Glass)",    
-                "Kieliszek do margarity",           
-                "Szklanka Collins",                 
-                "Szklanka Hurricane",               
-                "Kieliszek do koktajli (Coupette)", 
-                "Kieliszek do koniaku (Snifter)",   
-                "Kubek tiki",                       
-                "Szklanka do kawy po irlandzku"     
+                "Szklanka wysoka (Highball)",
+                "Szklanka niska (Old Fashioned)",
+                "Kieliszek do martini",
+                "Kieliszek do szampana (Flute)",
+                "Kieliszek do wina",
+                "Kufel do piwa",
+                "Kieliszek do shotów",
+                "Szklanka do piwa (Pint Glass)",
+                "Kieliszek do margarity",
+                "Szklanka Collins",
+                "Szklanka Hurricane",
+                "Kieliszek do koktajli (Coupette)",
+                "Kieliszek do koniaku (Snifter)",
+                "Kubek tiki",
+                "Szklanka do kawy po irlandzku"
             };
 
             if (!File.Exists(GlassTypesFile))

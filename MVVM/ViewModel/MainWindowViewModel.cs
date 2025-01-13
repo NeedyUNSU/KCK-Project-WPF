@@ -63,7 +63,12 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             UserLoggedIn = UserVM.CurrentUserIsLogged();
 
-            ShowDrinkMenuCommand = new RelayCommand(o => { CurrentView = DrinkVM; });
+            ShowDrinkMenuCommand = new RelayCommand(o => 
+            { 
+                DrinkVM.UserIsModerator = UserVM.CurrentUserIsModerator();
+                CurrentView = DrinkVM; 
+            });
+
             ShowLoginCommand = new RelayCommand(o =>
             {
                 UserVM.LoginPage.Execute(this);

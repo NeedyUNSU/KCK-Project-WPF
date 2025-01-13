@@ -229,7 +229,7 @@ IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
                 </Border>
             </Grid>-->
 
-            <!--<Grid Visibility="{Binding AdminEditUserMenu, Converter={StaticResource BooleanToVisibilityConverter}}" Background="White" >
+            <Grid Visibility="{Binding EditMenu, Converter={StaticResource BooleanToVisibilityConverter}}" Background="White" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*"/>
                     <ColumnDefinition/>
@@ -240,7 +240,7 @@ IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
                     <StackPanel VerticalAlignment="Center" Background="White">
                         <Grid>
                             <TextBlock Text="Edytuj użytkownika" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
-                            <Button Content="X" Command="{Binding AdminEditUserSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
+                            <Button Content="X" Command="{Binding DrinksEditDrinkSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
                         </Grid>
                         <TextBlock Text="* Nazwa użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
                         <TextBox Text="{Binding AdminAddUserName}" Margin="10,0,10,10"/>
@@ -257,7 +257,7 @@ IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
                         <Button Content="Zapisz zmiany" Command="{Binding AdminEditUserCommand}" Margin="10,0,10,10"/>
                     </StackPanel>
                 </Border>
-            </Grid>-->
+            </Grid>
 
         </Grid>
 

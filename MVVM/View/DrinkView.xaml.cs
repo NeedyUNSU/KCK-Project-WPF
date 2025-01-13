@@ -44,11 +44,10 @@ namespace KCK_Project_WPF.MVVM.View
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(!MainContext.UserVM.CurrentUserIsModerator()) return;
-
+            if (!MainContext.UserVM.CurrentUserIsModerator()) return;
             if (sender is DataGrid dataGrid && dataGrid.SelectedItem != null)
             {
-                MainContext.DrinkVM.DrinksEditDrinkSubPageCommand.Execute(dataGrid.SelectedItem);
+                MainContext.DrinkVM.DrinksEditDrinkSubPageCommand.Execute(this);
             }
         }
     }
