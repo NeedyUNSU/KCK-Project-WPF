@@ -15,6 +15,8 @@ namespace KCK_Project_WPF.MVVM.ViewModel
     {
         public ICommand DrinksAddDrinkSubPageCommand { get; set; }
         public ICommand DrinksEditDrinkSubPageCommand { get; set; }
+        public ICommand DrinksClearEditCommand { get; set; }
+        public ICommand DrinksSaveEditCommand { get; set; }
         #region Filters
 
         public ICommand DrinksOpenFiltersSubPageCommand { get; set; }
@@ -141,13 +143,64 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private ObservableCollection<IngredientModel> drinkSearchByOtherValues;
         public ObservableCollection<IngredientModel> DrinkSearchByOtherValues
         {
-            get { return new(drinkSearchByOther.Where(o=>o.IsSelected).ToList()); }
+            get { return new(drinkSearchByOther.Where(o => o.IsSelected).ToList()); }
             set { drinkSearchByOtherValues = value; OnPropertyChanged(); }
         }
 
         #endregion
 
-        private float drinkRating;
+
+        private string drinkName;
+
+        public string DrinkName
+        {
+            get { return drinkName; }
+            set { drinkName = value; OnPropertyChanged(); }
+        }
+
+        private string drinkDescription;
+
+        public string DrinkDescription
+        {
+            get { return drinkDescription; }
+            set { drinkDescription = value; OnPropertyChanged(); }
+        }
+
+        private List<string> drinkGlassType;
+
+        public List<string> DrinkGlassType
+        {
+            get { return drinkGlassType; }
+            set { drinkGlassType = value; OnPropertyChanged(); }
+        }
+
+        private string drinkGlassTypeValue;
+
+        public string DrinkGlassTypeValue
+        {
+            get { return drinkGlassTypeValue; }
+            set { drinkGlassTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private string drinkPreparationMethod;
+
+        public string DrinkPreparationMethod
+        {
+            get { return drinkPreparationMethod; }
+            set { drinkPreparationMethod = value; OnPropertyChanged(); }
+        }
+
+        public string AlkoholsList
+        {
+            get { return string.Join(", ", DrinkAddAlkoholIngredientValues); }
+        }
+
+        public string OthersList
+        {
+            get { return string.Join(", ", DrinkAddOtherIngredientValues); }
+        }
+
+        private float drinkRating = 1.0f;
 
         public float DrinkRating
         {
@@ -155,13 +208,35 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { drinkRating = value; OnPropertyChanged(); }
         }
 
+        private ObservableCollection<IngredientModel> drinkAddAlkoholIngredient;
+        public ObservableCollection<IngredientModel> DrinkAddAlkoholIngredient
+        {
+            get { return drinkAddAlkoholIngredient; }
+            set { drinkAddAlkoholIngredient = value; OnPropertyChanged(); OnPropertyChanged("AlkoholsList"); }
+        }
 
+        public ObservableCollection<IngredientModel> DrinkAddAlkoholIngredientValues
+        {
+            get { return new(drinkAddAlkoholIngredient.Where(o => o.IsSelected).ToList()); }
+        }
 
+        private ObservableCollection<IngredientModel> drinkAddOtherIngredient;
+        public ObservableCollection<IngredientModel> DrinkAddOtherIngredient
+        {
+            get { return drinkAddOtherIngredient; }
+            set { drinkAddOtherIngredient = value; OnPropertyChanged(); OnPropertyChanged("OthersList"); }
+        }
 
+        public ObservableCollection<IngredientModel> DrinkAddOtherIngredientValues
+        {
+            get { return new(drinkAddOtherIngredient.Where(o => o.IsSelected).ToList()); }
+        }
 
-
-
-
+        public void RefreshSelectedLists()
+        {
+            OnPropertyChanged("AlkoholsList");
+            OnPropertyChanged("OthersList");
+        }
 
         private bool editMenu = false;
 
@@ -171,6 +246,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { editMenu = value; OnPropertyChanged(); }
         }
 
+        private bool addMenu = false;
+
+        public bool AddMenu
+        {
+            get { return addMenu; }
+            set { addMenu = value; OnPropertyChanged(); }
+        }
 
         public ICommand BackToMainMenu { get; set; }
         public ICommand BackToMenu { get; set; }
@@ -326,10 +408,15 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             DrinkOrderTypeValue = DrinkOrderType[0];
             DrinkOrderBy = new() { "Domyślne sortowanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena" }; // "Składnik Alkocholowy", "Inny Składnik"
             DrinkOrderByValue = DrinkOrderBy[0];
-            DrinkSearchDataType = new() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składniki"};
+            DrinkSearchDataType = new() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Typ szkła", "Metoda Przygotowania", "Ocena", "Składniki" };
             DrinkSearchDataTypeValue = DrinkSearchDataType[0];
             DrinkSearchByAlkohol = new(_alcoholViewModel.Alcohols);
             DrinkSearchByOther = new(_otherViewModel.GetAll());
+
+            DrinkAddAlkoholIngredient = new(_alcoholViewModel.Alcohols);
+            DrinkAddOtherIngredient = new(_otherViewModel.GetAll());
+
+            DrinkGlassType = LoadGlassTypes();
 
             DrinksOpenFiltersSubPageCommand = new RelayCommand(o =>
             {
@@ -345,10 +432,30 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
             });
 
+            DrinksAddDrinkSubPageCommand = new RelayCommand(o =>
+            {
+                if (AddMenu)
+                {
+                    DrinkSearchMenu = false;
+                    EditMenu = false;
+                    DrinkSelected = null;
+                    AddMenu = false;
+                    DrinksClearEditCommand.Execute(this);   
+                }
+                else
+                {
+                    AddMenu = true;
+                    DrinkSearchMenu = false;
+                    EditMenu = false;
+                    DrinkSelected = null;
+                    DrinksClearEditCommand.Execute(this);
+                }
+            });
+
             DrinksEditDrinkSubPageCommand = new RelayCommand(o =>
             {
                 if (DrinkSelected == null) return;
-                 if (EditMenu)
+                if (EditMenu)
                 {
                     DrinkSearchMenu = false;
                     EditMenu = false;
@@ -358,8 +465,138 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 {
                     EditMenu = true;
                     DrinkSearchMenu = false;
+                    if (DrinkSelected != null)
+                    {
+                        DrinkGlassType = LoadGlassTypes();
+
+
+                        DrinkName = DrinkSelected.Name;
+                        DrinkDescription = DrinkSelected.Description;
+                        DrinkGlassTypeValue = DrinkGlassType.Where(o => o == DrinkSelected.GlassType).FirstOrDefault();
+                        DrinkPreparationMethod = DrinkSelected.PreparationMethod;
+                        DrinkRating = (float)Math.Round(DrinkSelected.Rating, 1);
+
+                        foreach (var item in DrinkAddAlkoholIngredient)
+                        {
+                            item.IsSelected = false;
+                        }
+
+                        foreach (var item in DrinkAddOtherIngredient)
+                        {
+                            item.IsSelected = false;
+                        }
+
+                        foreach (var ingredient in DrinkSelected.Ingredients)
+                        {
+                            var alko = DrinkAddAlkoholIngredient.Where(o => o.Name == ingredient.Name).FirstOrDefault();
+                            var other = DrinkAddOtherIngredient.Where(o => o.Name == ingredient.Name).FirstOrDefault();
+
+                            if (alko != null)
+                            {
+                                alko.IsSelected = true;
+                            }
+                            if (other != null)
+                            {
+                                other.IsSelected = true;
+                            }
+                        }
+
+                        DrinkAddAlkoholIngredient = new(DrinkAddAlkoholIngredient.OrderByDescending(o => o.IsSelected));
+                        DrinkAddOtherIngredient = new(DrinkAddOtherIngredient.OrderByDescending(o => o.IsSelected));
+
+                    }
                 }
             });
+
+            DrinksClearEditCommand = new RelayCommand(o =>
+            {
+                DrinkName = "";
+                DrinkDescription = "";
+                DrinkGlassTypeValue = "";
+                DrinkPreparationMethod = "";
+                DrinkRating = 1.0f;
+
+                foreach (var item in DrinkAddAlkoholIngredient)
+                {
+                    item.IsSelected = false;
+                }
+
+                foreach (var item in DrinkAddOtherIngredient)
+                {
+                    item.IsSelected = false;
+                }
+
+                RefreshSelectedLists();
+            });
+
+            DrinksSaveEditCommand = new RelayCommand(o =>
+            {
+                Dictionary<string, bool> Errors = new Dictionary<string, bool>();
+
+                if (string.IsNullOrWhiteSpace(DrinkName)) Errors.Add("Nazwa drinka nie może być pusta!", true);
+                if (string.IsNullOrWhiteSpace(DrinkDescription)) Errors.Add("Opis drinka nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(DrinkGlassTypeValue)) Errors.Add("Typ szkła musi zostać wybrany!", true);
+                if (string.IsNullOrWhiteSpace(DrinkPreparationMethod)) Errors.Add("Metoda przygotowania drinka nie może być pusta!", true);
+                if (!DrinkAddAlkoholIngredient.Any(o => o.IsSelected)) Errors.Add("Drink musi zawierać przynajmniej jeden alkochol!", true);
+                if (!DrinkAddOtherIngredient.Any(o => o.IsSelected)) Errors.Add("Drink musi zawierać przynajmniej jeden inny składnik!", true);
+
+                if (Errors.Count > 0)
+                {
+                    MessageBox.Show(string.Join("\n", Errors), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                else if (EditMenu)
+                {
+                    List<IngredientModel> ingredients = new List<IngredientModel>();
+
+                    DrinkSelected.Name = DrinkName;
+                    DrinkSelected.Description = DrinkDescription;
+                    DrinkSelected.GlassType = DrinkGlassTypeValue;
+                    DrinkSelected.PreparationMethod = DrinkPreparationMethod;
+                    DrinkSelected.Rating = DrinkRating;
+
+
+                    foreach (var item in DrinkAddAlkoholIngredientValues)
+                    {
+                        ingredients.Add(item);
+                    }
+
+                    foreach (var item in DrinkAddOtherIngredientValues)
+                    {
+                        ingredients.Add(item);
+                    }
+
+                    DrinkSelected.Ingredients = ingredients;
+                    Save();
+                    DrinksClearEditCommand.Execute(this);
+                    DrinksUpdateFiltersReloadCommand.Execute(this);
+                    DrinksEditDrinkSubPageCommand.Execute(this);
+                }
+                else if (AddMenu)
+                {
+                    List<IngredientModel> ingredients = new List<IngredientModel>();
+
+                    foreach (var item in DrinkAddAlkoholIngredientValues)
+                    {
+                        ingredients.Add(item);
+                    }
+
+                    foreach (var item in DrinkAddOtherIngredientValues)
+                    {
+                        ingredients.Add(item);
+                    }
+
+                    var drink = new DrinkModel(DrinkName, DrinkDescription, ingredients, DrinkRating, DrinkGlassTypeValue, DrinkPreparationMethod);
+
+                    if (Add(drink) == 1) MessageBox.Show("Drink Został pomyślnie dodany!", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    DrinksClearEditCommand.Execute(this);
+                    DrinksUpdateFiltersReloadCommand.Execute(this);
+                    DrinksAddDrinkSubPageCommand.Execute(this);
+                }
+
+            });
+
 
             DrinksRestartFiltersSubPageCommand = new RelayCommand(o =>
             {
@@ -395,7 +632,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 {
                     if (DrinkOrderByValue == DrinkOrderBy[1])
                     {
-                        DrinksCache = new(DrinksCache.OrderBy(o=>o.Name).ToList());
+                        DrinksCache = new(DrinksCache.OrderBy(o => o.Name).ToList());
                     }
                     else if (DrinkOrderByValue == DrinkOrderBy[2])
                     {
@@ -454,7 +691,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     //}
                 }
 
-                if(!string.IsNullOrWhiteSpace(DrinkSearchString))
+                if (!string.IsNullOrWhiteSpace(DrinkSearchString))
                 {
                     if (DrinkSearchDataTypeValue == DrinkSearchDataType[0])
                     {
@@ -486,7 +723,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     }
                 }
 
-                if (DrinkSearchByAlkohol.Any(o=>o.IsSelected))
+                if (DrinkSearchByAlkohol.Any(o => o.IsSelected))
                 {
                     ObservableCollection<DrinkModel> buf = new ObservableCollection<DrinkModel>();
                     ObservableCollection<DrinkModel> buffer = new ObservableCollection<DrinkModel>();
@@ -536,44 +773,18 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                                 }
                             }
                         }
-                        if(!firstrun)
+                        if (!firstrun)
                         {
-                            firstrun=true;
+                            firstrun = true;
                             buffer = new ObservableCollection<DrinkModel>(buf);
                         }
                         else
                             buffer = new(buffer.Intersect(buf));
                     }
-                    
+
                     DrinksCache = buffer;
                 }
             });
-
-            
-
-            //AddDrinkCommand = new RelayCommand(o => {
-            //    //MessageBox.Show("Simple MessageBox", "Simple MessageBox");
-            //    DisplayMenuNumber(1);
-            //});
-
-            //UpdateDrinkCommand = new RelayCommand(o =>
-            //{
-            //    DisplayMenuNumber(2);
-            //});
-
-            //DeleteDrinkCommand = new RelayCommand(o => 
-            //{ 
-            //    DisplayMenuNumber(3);
-            //});
-
-            //FilterDrinksByNameCommand = new RelayCommand(o => 
-            //{
-            //    DisplayMenuNumber(4);
-            //});
-            //FilterDrinksByIngredientCommand = new RelayCommand(o => 
-            //{
-            //    DisplayMenuNumber(5);
-            //});
 
             BackToMenu = new RelayCommand(o =>
             {
@@ -691,6 +902,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             }
             catch
             {
+                throw new Exception();
             }
         }
 

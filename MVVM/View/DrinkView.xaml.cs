@@ -50,5 +50,13 @@ namespace KCK_Project_WPF.MVVM.View
                 MainContext.DrinkVM.DrinksEditDrinkSubPageCommand.Execute(this);
             }
         }
+
+        private void ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                MainContext.DrinkVM.RefreshSelectedLists();
+            }
+        }
     }
 }
