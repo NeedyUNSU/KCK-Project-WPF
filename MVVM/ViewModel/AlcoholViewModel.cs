@@ -175,11 +175,90 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand AlcocholEditSelectedSubPageCommand { get; set; }
         public ICommand AlcocholRemoveSelectedCommand { get; set; }
 
+        private bool editMenu = false;
 
+        public bool EditMenu
+        {
+            get { return editMenu; }
+            set { editMenu = value; OnPropertyChanged(); }
+        }
 
+        private bool addMenu = false;
 
+        public bool AddMenu
+        {
+            get { return addMenu; }
+            set { addMenu = value; OnPropertyChanged(); }
+        }
 
+        public ICommand ClearEditCommand { get; set; }
+        public ICommand SaveEditCommand { get; set; }
 
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; OnPropertyChanged(); }
+        }
+
+        private string description;
+
+        public string Description
+        {
+            get { return description; }
+            set { description = value; OnPropertyChanged(); }
+        }
+
+        private List<string> typei;
+
+        public List<string> TypeI
+        {
+            get { return typei; }
+            set { typei = value; OnPropertyChanged(); }
+        }
+
+        private string typeIValue;
+
+        public string TypeIValue
+        {
+            get { return typeIValue; }
+            set { typeIValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> country;
+
+        public List<string> Country
+        {
+            get { return country; }
+            set { country = value; OnPropertyChanged(); }
+        }
+
+        private string countryValue;
+
+        public string CountryValue
+        {
+            get { return countryValue; }
+            set { countryValue = value; OnPropertyChanged(); }
+        }
+
+        private int year;
+
+        public int Year
+        {
+            get { return year; }
+            set { year = value; OnPropertyChanged("year"); OnPropertyChanged("CurrentYear"); }
+        }
+
+        public int CurrentYear { get { return DateTime.Now.Year; } }
+
+        private float percent;
+
+        public float Percent
+        {
+            get { return percent; }
+            set { percent = value; OnPropertyChanged(); }
+        }
 
 
         public ICommand BackToMainMenu { get; set; }
@@ -222,6 +301,11 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             AlcoholSearchByType.AddRange(_availableTypes);
             AlcoholSearchByCountryValue = AlcoholSearchByCountry[0];
             AlcoholSearchByTypeValue = AlcoholSearchByType[0];
+
+
+            TypeI = _availableTypes;
+            Country = _availableCountries;
+
 
             AlcoholRestartFiltersSubPageCommand = new RelayCommand(o =>
             {
@@ -344,20 +428,138 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 OnPropertyChanged("AlcoholsCache");
             });
 
+            AlcocholRemoveSelectedCommand = new RelayCommand(o =>
+            {
 
+            });
 
             AlcocholOpenFiltersSubPageCommand = new RelayCommand(o =>
             {
                 if (AlcoholSearchMenu)
                 {
+                    AddMenu = false;
+                    EditMenu = false;
                     AlcoholSearchMenu = false;
                 }
                 else
                 {
+                    AddMenu = false;
+                    EditMenu = false;
                     AlcoholSearchMenu = true;
                 }
             });
 
+            AlcocholEditSelectedSubPageCommand = new RelayCommand(o =>
+            {
+                if (EditMenu)
+                {
+                    AddMenu = false;
+                    EditMenu = false;
+                    AlcoholSearchMenu = false;
+                    AlcoholSelected = null;
+                }
+                else
+                {
+                    AddMenu = false;
+                    AlcoholSearchMenu = false;
+
+                    if (AlcoholSelected == null) return;
+                    EditMenu = true;
+
+                    Name = AlcoholSelected.Name;
+                    Description = AlcoholSelected.Description;
+                    TypeIValue = TypeI.Where(o => o == AlcoholSelected.Type).FirstOrDefault();
+                    CountryValue = Country.Where(o => o == AlcoholSelected.Country).FirstOrDefault();
+                    Year = AlcoholSelected.Year;
+                    Percent = AlcoholSelected.Percent;
+                }
+            });
+
+            ClearEditCommand = new RelayCommand(o => 
+            {
+                Name = "";
+                Description = "";
+                TypeIValue = TypeI.FirstOrDefault();
+                CountryValue = Country.FirstOrDefault();
+                Year = 1500;
+                Percent = 0f;
+            });
+
+            SaveEditCommand = new RelayCommand(o => 
+            {
+                Dictionary<string, bool> Errors = new Dictionary<string, bool>();
+
+                if (string.IsNullOrWhiteSpace(Name)) Errors.Add("Nazwa Alkocholu nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(Description)) Errors.Add("Opis Alkocholu nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(TypeIValue)) Errors.Add("Typ Alkocholu nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(CountryValue)) Errors.Add("Kraj pochodzenia Alkocholu nie może być pusty!", true);
+
+                if (Errors.Count > 0)
+                {
+                    MessageBox.Show(string.Join("\n", Errors), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                else if (EditMenu)
+                {
+                    List<IngredientModel> ingredients = new List<IngredientModel>();
+                    
+                    AlcoholSelected.Name = Name;
+                    AlcoholSelected.Description = Description;
+                    AlcoholSelected.Year = Year;
+                    AlcoholSelected.Type = TypeIValue;
+                    AlcoholSelected.Percent = Percent;
+                    AlcoholSelected.Country = CountryValue;
+
+
+                    Save();
+                    ClearEditCommand.Execute(this);
+                    AlcoholUpdateFiltersReloadCommand.Execute(this);
+                    AlcocholEditSelectedSubPageCommand.Execute(this);
+                }
+                else if (AddMenu)
+                {
+                    var alko = new AlcoholModel(Name,Description,Year,TypeIValue,Percent,CountryValue);
+
+                    if (Add(alko) == 1) MessageBox.Show("Alkochol Został pomyślnie dodany!", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    ClearEditCommand.Execute(this);
+                    AlcoholUpdateFiltersReloadCommand.Execute(this);
+                    AlcocholAddSubPageCommand.Execute(this);
+                }
+
+            });
+
+            AlcocholRemoveSelectedCommand = new RelayCommand(o => 
+            {
+                if (AlcoholSelected == null) return;
+                var msgOut = MessageBox.Show($"Czy na pewno chcesz usunąć alkochol  {AlcoholSelected.Name}?", "Czy chcesz kontynułować?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (msgOut == MessageBoxResult.Yes)
+                {
+                    _alcohols.Remove(AlcoholSelected);
+                    Save();
+                    AlcoholUpdateFiltersReloadCommand.Execute(this);
+                }
+            });
+
+            AlcocholAddSubPageCommand = new RelayCommand(o =>
+            {
+                if (AddMenu)
+                {
+                    AddMenu = false;
+                    EditMenu = false;
+                    AlcoholSearchMenu = false;
+                    AlcoholSelected = null;
+                }
+                else
+                {
+                    ClearEditCommand.Execute(this);
+                    EditMenu = false;
+                    AlcoholSearchMenu = false;
+                    AlcoholSelected = null;
+                    AddMenu = true;
+                }
+
+            });
 
             BackToMenu = new RelayCommand(o =>
             {
