@@ -428,11 +428,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 OnPropertyChanged("AlcoholsCache");
             });
 
-            AlcocholRemoveSelectedCommand = new RelayCommand(o =>
-            {
-
-            });
-
             AlcocholOpenFiltersSubPageCommand = new RelayCommand(o =>
             {
                 if (AlcoholSearchMenu)

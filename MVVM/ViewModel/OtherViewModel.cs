@@ -16,6 +16,22 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         private const string FilePath = "others.xml";
         private List<OtherModel> _others;
 
+        private MainWindowViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    return mainWindow.DataContext as MainWindowViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
+
         private ObservableCollection<OtherModel> ohtersCache;
 
         public ObservableCollection<OtherModel> OthersCache
@@ -152,6 +168,81 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand UpdateFiltersReloadCommand { get; set; }
 
 
+        public ICommand AddSubPageCommand { get; set; }
+        public ICommand EditSelectedSubPageCommand { get; set; }
+        public ICommand RemoveSelectedCommand { get; set; }
+
+        private bool editMenu = false;
+
+        public bool EditMenu
+        {
+            get { return editMenu; }
+            set { editMenu = value; OnPropertyChanged(); }
+        }
+
+        private bool addMenu = false;
+
+        public bool AddMenu
+        {
+            get { return addMenu; }
+            set { addMenu = value; OnPropertyChanged(); }
+        }
+
+
+        public ICommand BackToMainMenu { get; set; }
+
+        public ICommand ClearEditCommand { get; set; }
+        public ICommand SaveEditCommand { get; set; }
+
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; OnPropertyChanged(); }
+        }
+
+        private string description;
+
+        public string Description
+        {
+            get { return description; }
+            set { description = value; OnPropertyChanged(); }
+        }
+
+        private string healthBenefits;
+
+        public string HealthBenefits
+        {
+            get { return healthBenefits; }
+            set { healthBenefits = value; OnPropertyChanged(); }
+        }
+
+        private string availability;
+
+        public string Availability
+        {
+            get { return availability; }
+            set { availability = value; OnPropertyChanged(); }
+        }
+
+        private List<string> typeI;
+
+        public List<string> TypeI
+        {
+            get { return typeI; }
+            set { typeI = value; OnPropertyChanged(); }
+        }
+
+        private string typeIValue;
+
+        public string TypeIValue
+        {
+            get { return typeIValue; }
+            set { typeIValue = value; OnPropertyChanged(); }
+        }
+
+
 
 
 
@@ -206,27 +297,250 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             OthersCache = new(GetAll());
 
+            OrderType = new List<string>() { "Rosnąco", "Malejąco" };
+            OrderTypeValue = OrderType[0];
+            OrderBy = new List<string>() { "Domyślne sortowanie", "Nazwa", "Opis", "składnika", "Dostępność", "Typ" };
+            OrderByValue = OrderBy[0];
+            SearchDataType = new List<string>() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Korzyści zdrowotne", "Dostępność", "Typ" };
+            SearchDataTypeValue = SearchDataType[0];
+            SearchByType = new List<string>() { "Wybierz typ do wyszukania" };
+            SearchByType.AddRange(GetAvailableTypes());
+            SearchByTypeValue = SearchByType[0];
+            TypeI = GetAvailableTypes();
+
+            RemoveSelectedCommand = new RelayCommand(o => 
+            {
+                if (OtherSelected == null) return;
+                var msgOut = MessageBox.Show($"Czy na pewno chcesz usunąć alkochol  {OtherSelected.Name}?", "Czy chcesz kontynułować?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (msgOut == MessageBoxResult.Yes)
+                {
+                    _others.Remove(OtherSelected);
+                    Save();
+                    UpdateFiltersReloadCommand.Execute(this);
+                }
+            });
+
+            RestartFiltersSubPageCommand = new RelayCommand(o => 
+            {
+                OrderTypeValue = OrderType[0];
+                OrderByValue = OrderBy[0];
+                SearchDataTypeValue = SearchDataType[0];
+                SearchByTypeValue = SearchByType[0];
+                SearchString = "";
+
+            });
+
+            UpdateFiltersReloadCommand = new RelayCommand(o => 
+            {
+                OthersCache = new(GetAll());
+
+                if (OrderByValue != OrderBy[0])
+                {
+                    if (OrderTypeValue == OrderType[0])
+                    {
+                        if (OrderByValue == OrderBy[1])
+                        {
+                            OthersCache = new(OthersCache.OrderBy(b => b.Name));
+                        }
+                        else if (OrderByValue == OrderBy[2])
+                        {
+                            OthersCache = new(OthersCache.OrderBy(b => b.Description));
+                        }
+                        else if (OrderByValue == OrderBy[3])
+                        {
+                            OthersCache = new(OthersCache.OrderBy(b => b.HealthBenefits));
+                        }
+                        else if (OrderByValue == OrderBy[4])
+                        {
+                            OthersCache = new(OthersCache.OrderBy(b => b.Availability));
+                        }
+                        else if (OrderByValue == OrderBy[5])
+                        {
+                            OthersCache = new(OthersCache.OrderBy(b => b.Type));
+                        }
+                    }
+                    else
+                    {
+                        if (OrderByValue == OrderBy[1])
+                        {
+                            OthersCache = new(OthersCache.OrderByDescending(b => b.Name));
+                        }
+                        else if (OrderByValue == OrderBy[2])
+                        {
+                            OthersCache = new(OthersCache.OrderByDescending(b => b.Description));
+                        }
+                        else if (OrderByValue == OrderBy[3])
+                        {
+                            OthersCache = new(OthersCache.OrderByDescending(b => b.HealthBenefits));
+                        }
+                        else if (OrderByValue == OrderBy[4])
+                        {
+                            OthersCache = new(OthersCache.OrderByDescending(b => b.Availability));
+                        }
+                        else if (OrderByValue == OrderBy[5])
+                        {
+                            OthersCache = new(OthersCache.OrderByDescending(b => b.Type));
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(SearchString))
+                {
+                    if (SearchDataTypeValue == SearchDataType[0])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.Name} {o.Description} {o.HealthBenefits} {o.Availability} {o.Type}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                    else if(SearchDataTypeValue == SearchDataType[1])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.Name}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                    else if (SearchDataTypeValue == SearchDataType[2])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.Description}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                    else if (SearchDataTypeValue == SearchDataType[3])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.HealthBenefits}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                    else if (SearchDataTypeValue == SearchDataType[4])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.Availability}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                    else if (SearchDataTypeValue == SearchDataType[5])
+                    {
+                        OthersCache = new(OthersCache.Where(o => $"{o.Type}".ToLower().Contains(SearchString.ToLower())));
+                    }
+                }
+
+                if (SearchByTypeValue != SearchByType[0])
+                {
+                    OthersCache = new(OthersCache.Where(o=> o.Type == SearchByTypeValue));
+                }
+            });
+
+            ClearEditCommand = new RelayCommand(o => 
+            {
+                Name = "";
+                Description = "";
+                HealthBenefits = "";
+                Availability = "";
+                TypeIValue = TypeI.FirstOrDefault();
+            });
+
+            SaveEditCommand = new RelayCommand(o =>
+            {
+                Dictionary<string, bool> Errors = new Dictionary<string, bool>();
+
+                if (string.IsNullOrWhiteSpace(Name)) Errors.Add("Nazwa składnika nie może być pusta!", true);
+                if (string.IsNullOrWhiteSpace(Description)) Errors.Add("Opis składnika nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(TypeIValue)) Errors.Add("Typ składnika nie może być pusty!", true);
+                if (string.IsNullOrWhiteSpace(HealthBenefits)) Errors.Add("Korzyści zdrowotne składnika nie mogą być puste!", true);
+                if (string.IsNullOrWhiteSpace(Availability)) Errors.Add("Dostępność składnika nie może być pusta!", true);
+
+                if (Errors.Count > 0)
+                {
+                    MessageBox.Show(string.Join("\n", Errors), "Validator", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                else if (EditMenu)
+                {
+                    List<IngredientModel> ingredients = new List<IngredientModel>();
+
+                    OtherSelected.Name = Name;
+                    OtherSelected.Description = Description;
+                    OtherSelected.HealthBenefits = HealthBenefits;
+                    OtherSelected.Availability = Availability;
+                    OtherSelected.Type = TypeIValue;
 
 
+                    Save();
+                    ClearEditCommand.Execute(this);
+                    UpdateFiltersReloadCommand.Execute(this);
+                    EditSelectedSubPageCommand.Execute(this);
+                }
+                else if (AddMenu)
+                {
+                    var other = new OtherModel(Name, Description, HealthBenefits, Availability, TypeIValue);
 
+                    if (Add(other)) MessageBox.Show("Składnik Został pomyślnie dodany!", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            OpenFiltersSubPageCommand = new RelayCommand(o => 
+                    ClearEditCommand.Execute(this);
+                    UpdateFiltersReloadCommand.Execute(this);
+                    AddSubPageCommand.Execute(this);
+                }
+
+            });
+
+            EditSelectedSubPageCommand = new RelayCommand(o =>
+            {
+                if (EditMenu)
+                {
+                    SearchMenu = false;
+                    AddMenu = false;
+                    EditMenu = false;
+                    OtherSelected = null;
+                }
+                else
+                {
+                    SearchMenu = false;
+                    AddMenu = false;
+
+                    if (OtherSelected == null) return;
+
+                    EditMenu = true;
+
+                    Name = OtherSelected.Name;
+                    Description = OtherSelected.Description;
+                    HealthBenefits = OtherSelected.HealthBenefits;
+                    Availability = OtherSelected.Availability;
+                    TypeIValue = TypeI.Where(o => o == OtherSelected.Type).FirstOrDefault();
+
+                }
+
+            });
+
+            AddSubPageCommand = new RelayCommand(o =>
+            {
+                if (AddMenu)
+                {
+                    AddMenu = false;
+                    EditMenu = false;
+                    SearchMenu = false;
+                    OtherSelected = null;
+                }
+                else
+                {
+                    EditMenu = false;
+                    SearchMenu = false;
+                    OtherSelected = null;
+                    ClearEditCommand.Execute(this);
+                    AddMenu = true;
+                }
+
+            });
+
+            OpenFiltersSubPageCommand = new RelayCommand(o =>
             {
                 if (SearchMenu)
                 {
+                    AddMenu = false;
+                    EditMenu = false;
                     SearchMenu = false;
                 }
                 else
                 {
+                    AddMenu = false;
+                    EditMenu = false;
                     SearchMenu = true;
                 }
 
             });
 
-
-
-
-
+            BackToMainMenu = new RelayCommand(o => 
+            {
+                MainContext.CurrentView = null;
+                RestartFiltersSubPageCommand.Execute(this);
+            });
         }
 
         public List<OtherModel> Load()

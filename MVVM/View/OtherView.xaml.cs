@@ -47,7 +47,7 @@ namespace KCK_Project_WPF.MVVM.View
             if (!MainContext.UserVM.CurrentUserIsModerator()) return;
             if (sender is DataGrid dataGrid && dataGrid.SelectedItem != null)
             {
-                //MainContext.AlcoholVM.AlcocholEditSelectedSubPageCommand.Execute(this);
+                MainContext.OtherVM.EditSelectedSubPageCommand.Execute(this);
             }
         }
     }
