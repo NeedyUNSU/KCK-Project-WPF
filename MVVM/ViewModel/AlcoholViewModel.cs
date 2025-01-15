@@ -1,14 +1,189 @@
-﻿using System.IO;
+﻿using KCK_Project_WPF.MVVM.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using KCK_Project_WPF.MVVM.Core;
-using KCK_Project_WPF.MVVM.Model;
+using System.Windows.Input;
+using System.Windows;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
-    public class AlcoholViewModel
+    public class AlcoholViewModel : BaseViewModel
     {
         private List<AlcoholModel> _alcohols;
         private List<string> _availableTypes;
         private List<string> _availableCountries;
+
+        private ObservableCollection<AlcoholModel> alcoholsCache;
+
+        public ObservableCollection<AlcoholModel> AlcoholsCache
+        {
+            get { return alcoholsCache; }
+            set { alcoholsCache = value; OnPropertyChanged(); }
+        }
+
+        private AlcoholModel alcoholSelected;
+
+        public AlcoholModel AlcoholSelected
+        {
+            get { return alcoholSelected; }
+            set
+            {
+                alcoholSelected = value;
+                OnPropertyChanged(nameof(alcoholSelected));
+                OnPropertyChanged(nameof(IsButtonEnabled));
+            }
+        }
+
+        public bool IsButtonEnabled => AlcoholSelected != null;
+
+        private double maxHeight = 230;
+
+        public double MaxHeight
+        {
+            get { return maxHeight; }
+            set { maxHeight = value; OnPropertyChanged(); }
+        }
+
+        public void UpdateMaxHeight()
+        {
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            MaxHeight = mainWindow.Height - 180;
+        }
+
+        public void UpdateMaxHeight(int size)
+        {
+            MaxHeight = size - 180;
+        }
+
+        private bool userIsModerator = false;
+
+        public bool UserIsModerator
+        {
+            get { return userIsModerator; }
+            set { userIsModerator = value; OnPropertyChanged(); }
+        }
+
+
+        private bool alcoholSearchMenu = false;
+
+        public bool AlcoholSearchMenu
+        {
+            get { return alcoholSearchMenu; }
+            set { alcoholSearchMenu = value; OnPropertyChanged(); }
+        }
+
+        public ICommand AlcocholOpenFiltersSubPageCommand { get; set; }
+
+        private List<string> alcoholOrderType;
+
+        public List<string> AlcoholOrderType
+        {
+            get { return alcoholOrderType; }
+            set { alcoholOrderType = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholOrderTypeValue;
+
+        public string AlcoholOrderTypeValue
+        {
+            get { return alcoholOrderTypeValue; }
+            set { alcoholOrderTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> alcoholOrderBy;
+
+        public List<string> AlcoholOrderBy
+        {
+            get { return alcoholOrderBy; }
+            set { alcoholOrderBy = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholOrderByValue;
+
+        public string AlcoholOrderByValue
+        {
+            get { return alcoholOrderByValue; }
+            set { alcoholOrderByValue = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholSearchString;
+
+        public string AlcoholSearchString
+        {
+            get { return alcoholSearchString; }
+            set { alcoholSearchString = value; OnPropertyChanged(); }
+        }
+
+        private List<string> alcoholSearchDataType;
+
+        public List<string> AlcoholSearchDataType
+        {
+            get { return alcoholSearchDataType; }
+            set { alcoholSearchDataType = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholSearchDataTypeValue;
+
+        public string AlcoholSearchDataTypeValue
+        {
+            get { return alcoholSearchDataTypeValue; }
+            set { alcoholSearchDataTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> alcoholSearchByCountry;
+
+        public List<string> AlcoholSearchByCountry
+        {
+            get { return alcoholSearchByCountry; }
+            set { alcoholSearchByCountry = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholSearchByCountryValue;
+
+        public string AlcoholSearchByCountryValue
+        {
+            get { return alcoholSearchByCountryValue; }
+            set { alcoholSearchByCountryValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> alcoholSearchByType;
+
+        public List<string> AlcoholSearchByType
+        {
+            get { return alcoholSearchByType; }
+            set { alcoholSearchByType = value; OnPropertyChanged(); }
+        }
+
+        private string alcoholSearchByTypeValue;
+
+        public string AlcoholSearchByTypeValue
+        {
+            get { return alcoholSearchByTypeValue; }
+            set { alcoholSearchByTypeValue = value; OnPropertyChanged(); }
+        }
+
+        public ICommand AlcoholRestartFiltersSubPageCommand { get; set; }
+        public ICommand AlcoholUpdateFiltersReloadCommand { get; set; }
+
+
+
+        public ICommand AlcocholAddSubPageCommand { get; set; }
+        public ICommand AlcocholEditSelectedSubPageCommand { get; set; }
+        public ICommand AlcocholRemoveSelectedCommand { get; set; }
+
+
+
+
+
+
+
+
+        public ICommand BackToMainMenu { get; set; }
+        public ICommand BackToMenu { get; set; }
 
         public AlcoholViewModel()
         {
@@ -31,6 +206,176 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 AddType($"Type_test_{i}");
             }
 
+
+
+            AlcoholsCache = new(_alcohols);
+
+            AlcoholOrderType = new List<string>() { "Rosnąco", "Malejąco" };
+            AlcoholOrderTypeValue = AlcoholOrderType[0];
+            AlcoholOrderBy = new List<string>() { "Domyślne sortowanie", "Nazwa", "Opis", "Rok", "Typ", "Zawartość procentowa", "Kraj" };
+            AlcoholOrderByValue = AlcoholOrderBy[0];
+            AlcoholSearchDataType = new List<string>() { "Globalne wyszukiwanie", "Nazwa", "Opis", "Rok", "Typ", "Zawartość procentowa", "Kraj" };
+            AlcoholSearchDataTypeValue = AlcoholSearchDataType[0];
+            AlcoholSearchByCountry = new List<string>() { "Nie ustawiono" };
+            AlcoholSearchByCountry.AddRange(_availableCountries);
+            AlcoholSearchByType = new List<string>() { "Nie ustawiono" };
+            AlcoholSearchByType.AddRange(_availableTypes);
+            AlcoholSearchByCountryValue = AlcoholSearchByCountry[0];
+            AlcoholSearchByTypeValue = AlcoholSearchByType[0];
+
+            AlcoholRestartFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                AlcoholOrderTypeValue = AlcoholOrderType[0];
+                AlcoholOrderByValue = AlcoholOrderBy[0];
+                AlcoholSearchString = "";
+                AlcoholSearchDataTypeValue = AlcoholSearchDataType[0];
+                AlcoholSearchByCountryValue = AlcoholSearchByCountry[0];
+                AlcoholSearchByTypeValue = AlcoholSearchByType[0];
+
+                AlcoholUpdateFiltersReloadCommand.Execute(this);
+            });
+
+            AlcoholUpdateFiltersReloadCommand = new RelayCommand(o =>
+            {
+                AlcoholsCache = new(_alcohols);
+
+                if (AlcoholOrderByValue != AlcoholOrderBy[0])
+                {
+                    if (AlcoholOrderTypeValue == AlcoholOrderType[0])
+                    {
+                        if (AlcoholOrderByValue == AlcoholOrderBy[1])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Name));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[2])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Description));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[3])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Year));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[4])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Type));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[5])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Percent));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[6])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderBy(o => o.Country));
+                        }
+                    }
+                    else
+                    {
+                        if (AlcoholOrderByValue == AlcoholOrderBy[1])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Name));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[2])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Description));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[3])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Year));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[4])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Type));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[5])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Percent));
+                        }
+                        else if (AlcoholOrderByValue == AlcoholOrderBy[6])
+                        {
+                            AlcoholsCache = new(AlcoholsCache.OrderByDescending(o => o.Country));
+                        }
+                    }
+
+
+                }
+
+                if (!string.IsNullOrWhiteSpace(AlcoholSearchString))
+                {
+                    if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[0])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Name} {o.Description} {o.Year} {o.Type} {o.Percent} {o.Country}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[1])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Name}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[2])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Description}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[3])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Year}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[4])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Type}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[5])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Percent}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                    else if (AlcoholSearchDataTypeValue == AlcoholSearchDataType[6])
+                    {
+                        AlcoholsCache = new(AlcoholsCache.Where(o => $"{o.Country}".ToLower().Contains(AlcoholSearchString.ToLower())).ToList());
+                    }
+                }
+
+                if (AlcoholSearchByCountryValue != AlcoholSearchByCountry[0])
+                {
+                    AlcoholsCache = new(AlcoholsCache.Where(o => o.Country == AlcoholSearchByCountryValue).ToList());
+                }
+
+                if (AlcoholSearchByTypeValue != AlcoholSearchByType[0])
+                {
+                    AlcoholsCache = new(AlcoholsCache.Where(o => o.Type == AlcoholSearchByTypeValue).ToList());
+                }
+
+                OnPropertyChanged("AlcoholsCache");
+            });
+
+
+
+            AlcocholOpenFiltersSubPageCommand = new RelayCommand(o =>
+            {
+                if (AlcoholSearchMenu)
+                {
+                    AlcoholSearchMenu = false;
+                }
+                else
+                {
+                    AlcoholSearchMenu = true;
+                }
+            });
+
+
+            BackToMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+            });
+
+            BackToMainMenu = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
+                {
+                    MainWindowViewModel mainViewModel = mainWindow.DataContext as MainWindowViewModel;
+
+                    mainViewModel.CurrentView = null;
+                }
+            });
 
         }
 

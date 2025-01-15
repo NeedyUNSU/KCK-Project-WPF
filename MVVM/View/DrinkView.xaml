@@ -17,12 +17,14 @@
                         <ColumnDefinition Width="0.5*"/>
                         <ColumnDefinition Width="0.5*"/>
                         <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Menu Drinków" Grid.Column="0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
 
                     <Button Content="Dodaj drinka" Grid.Column="2" Command="{Binding DrinksAddDrinkSubPageCommand}" Margin="10,20,0,20" Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <Button Content="Edytuj drinka" Grid.Column="3" Command="{Binding DrinksEditDrinkSubPageCommand}" CommandParameter="{Binding DrinkSelected}" Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsButtonEnabled}" Margin="10,20,0,20"/>
-                    <Button Content="Filtry" Grid.Column="4" Command="{Binding DrinksOpenFiltersSubPageCommand}" Margin="10,20,0,20"/>
+                    <Button Content="Usuń drinka" Grid.Column="4" Command="{Binding DrinksRemoveSelectedCommand}" CommandParameter="{Binding DrinkSelected}" Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsButtonEnabled}" Margin="10,20,0,20"/>
+                    <Button Content="Filtry" Grid.Column="5" Command="{Binding DrinksOpenFiltersSubPageCommand}" Margin="10,20,0,20"/>
 
 
                 </Grid>
@@ -39,8 +41,7 @@
           SelectedValue="{Binding DrinkSelected}"
           MinHeight="270" MaxHeight="{Binding MaxHeight}"
                           >
-                    <!--
-          -->
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="*" 
                             IsReadOnly="True" 
@@ -197,37 +198,6 @@
 
             </Grid>
 
-            <!--<Grid Visibility="{Binding AdminAddUserMenu, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="0.5*"/>
-                </Grid.ColumnDefinitions>
-
-
-                <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" VerticalAlignment="Center">
-                    <StackPanel VerticalAlignment="Center" Background="White">
-                        <Grid>
-                            <TextBlock Text="Dodaj użytkownika" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Margin="0,0,0,20" />
-                            <Button Content="X" Command="{Binding AdminCloseAddUserSubPageCommand}" HorizontalAlignment="Right" Margin="0,10,10,10" Padding="10,0,10,0"/>
-                        </Grid>
-                        <TextBlock Text="* Nazwa użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserName}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Zdjęcie Profilowe" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserProfilePicture}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* E-mail" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserEmail}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Hasło" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <TextBox Text="{Binding AdminAddUserPassword}" Margin="10,0,10,10"/>
-                        <TextBlock Text="* Wybierz typ użytkownika" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0" />
-                        <ComboBox SelectedValue="{Binding AdminAddUserTypeValue}" ItemsSource="{Binding AdminAddUserType}" Margin="10,0,10,10"/>
-                        <Button Content="Wyczyść" Command="{Binding AdminAddUserClearCommand}" Margin="10,0,10,10"/>
-                        <Button Content="Generuj losowo" Command="{Binding AdminAddUserRandomCommand}" Margin="10,0,10,10"/>
-                        <Button Content="Dodaj użytkownika" Command="{Binding AdminAddUserCommand}" Margin="10,0,10,10"/>
-                    </StackPanel>
-                </Border>
-            </Grid>-->
-
             <Grid Visibility="{Binding EditMenu, Converter={StaticResource BooleanToVisibilityConverter}}" Background="White" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.2*"/>
@@ -303,7 +273,7 @@
                                 </ComboBox>
                                 <TextBlock Text="Lista alkocholowych składników:" TextWrapping="Wrap" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
                                 <TextBlock Text="{Binding AlkoholsList}" TextWrapping="Wrap" HorizontalAlignment="left" FontWeight="Regular" FontSize="10" Margin="10,0,0,20"/>
-                                
+
                                 <TextBlock Text="* Inne składniki " HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
                                 <ComboBox HorizontalContentAlignment="Left" VerticalContentAlignment="Top" IsReadOnly="True" StaysOpenOnEdit="True" Margin="10,0,10,10" DropDownClosed="ComboBox_DropDownClosed">
                                     <ComboBox.ItemsPanel>
@@ -332,7 +302,7 @@
                                 <TextBlock Text="{Binding OthersList}" TextWrapping="Wrap" HorizontalAlignment="left" FontWeight="Regular" FontSize="10" Margin="10,0,0,0"/>
 
                             </StackPanel>
-                            
+
                             <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Content="Zapisz zmiany" Command="{Binding DrinksSaveEditCommand}" Margin="10,0,10,10"/>
 
                         </Grid>
@@ -449,76 +419,12 @@
                                 </ComboBox>
                                 <TextBlock Text="Lista Innych składników:" TextWrapping="Wrap" HorizontalAlignment="left" FontWeight="Bold" FontSize="10" Margin="10,0,0,0"/>
                                 <TextBlock Text="{Binding OthersList}" TextWrapping="Wrap" HorizontalAlignment="left" FontWeight="Regular" FontSize="10" Margin="10,0,0,0"/>
-
                             </StackPanel>
-
                             <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Content="Zapisz zmiany" Command="{Binding DrinksSaveEditCommand}" Margin="10,0,10,10"/>
-
                         </Grid>
-
-
-
                     </StackPanel>
                 </Border>
             </Grid>
-            
-            
-            
-            
         </Grid>
-
-        <!--<StackPanel Margin="20" Visibility="{Binding MenuAppear[0], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu Drinków 0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Filtruj drinki po nazwie" Command="{Binding FilterDrinksByNameCommand}" Margin="5"/>
-            <Button Content="Filtruj drinki po składniku" Command="{Binding FilterDrinksByIngredientCommand}" Margin="5"/>
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-            <Button Content="Usuń drinka" Command="{Binding DeleteDrinkCommand}" Margin="5"
-                Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="Powrót do menu głównego" Command="{Binding BackToMainMenu}" Margin="5"/>
-        </StackPanel>
-        
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[1], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu chuj Drinków 1" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-            <Button Content="Usuń drinka" Command="{Binding DeleteDrinkCommand}" Margin="5"
-        Visibility="{Binding UserIsModerator, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="Filtruj drinki po nazwie" Command="{Binding FilterDrinksByNameCommand}" Margin="5"/>
-            <Button Content="Filtruj drinki po składniku" Command="{Binding FilterDrinksByIngredientCommand}" Margin="5"/>
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
-        
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[2], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu w chuj Drinków 2" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-            
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
-        
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[3], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu w chuj Drinków 3" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
-
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu w chuj Drinków 4" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>
-        
-        <StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu w chuj Drinków 5" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
-            <Button Content="Dodaj drinka" Command="{Binding AddDrinkCommand}" Margin="5"/>
-            <Button Content="Zaktualizuj drinka" Command="{Binding UpdateDrinkCommand}" Margin="5"/>
-
-            <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="5"/>
-        </StackPanel>-->
     </Grid>
 </UserControl>

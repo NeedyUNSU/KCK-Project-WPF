@@ -17,6 +17,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
         public ICommand DrinksEditDrinkSubPageCommand { get; set; }
         public ICommand DrinksClearEditCommand { get; set; }
         public ICommand DrinksSaveEditCommand { get; set; }
+        public ICommand DrinksRemoveSelectedCommand { get; set; }
         #region Filters
 
         public ICommand DrinksOpenFiltersSubPageCommand { get; set; }
@@ -440,7 +441,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     EditMenu = false;
                     DrinkSelected = null;
                     AddMenu = false;
-                    DrinksClearEditCommand.Execute(this);   
+                    DrinksClearEditCommand.Execute(this);
                 }
                 else
                 {
@@ -597,6 +598,18 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
             });
 
+            DrinksRemoveSelectedCommand = new RelayCommand(o =>
+            {
+                if (DrinkSelected == null) return;
+                var msgOut = MessageBox.Show($"Czy na pewno chcesz usunąć drink {DrinkSelected.Name}?", "Czy chcesz kontynułować?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (msgOut == MessageBoxResult.Yes)
+                {
+                    _drinksCache.Remove(DrinkSelected);
+                    Save();
+                    DrinksUpdateFiltersReloadCommand.Execute(this);
+                }
+
+            });
 
             DrinksRestartFiltersSubPageCommand = new RelayCommand(o =>
             {

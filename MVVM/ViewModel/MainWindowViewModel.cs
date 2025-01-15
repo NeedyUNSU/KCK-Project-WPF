@@ -81,6 +81,12 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 CurrentView = UserVM;
             });
 
+            ShowAlcoholMenuCommand = new RelayCommand(o =>
+            {
+                AlcoholVM.UserIsModerator = UserVM.CurrentUserIsModerator();
+                CurrentView = AlcoholVM;
+            });
+
             LogoutCommand = new RelayCommand(o => Logout());
 
             TurnOffApp = new RelayCommand(o =>
