@@ -52,12 +52,14 @@ namespace KCK_Project_WPF
                 MainContext.UserVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
                 MainContext.DrinkVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
                 MainContext.AlcoholVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
+                MainContext.OtherVM.UpdateMaxHeight((int)SystemParameters.WorkArea.Height);
             }
             else
             {
                 MainContext.UserVM.UpdateMaxHeight();
                 MainContext.DrinkVM.UpdateMaxHeight();
                 MainContext.AlcoholVM.UpdateMaxHeight();
+                MainContext.OtherVM.UpdateMaxHeight();
             }
         }
 

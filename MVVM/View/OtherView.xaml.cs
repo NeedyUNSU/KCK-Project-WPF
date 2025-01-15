@@ -17,11 +17,11 @@ using System.Windows.Shapes;
 namespace KCK_Project_WPF.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for AlcoholView.xaml
+    /// Interaction logic for OtherView.xaml
     /// </summary>
-    public partial class AlcoholView : UserControl
+    public partial class OtherView : UserControl
     {
-        public AlcoholView()
+        public OtherView()
         {
             InitializeComponent();
         }
@@ -47,7 +47,7 @@ namespace KCK_Project_WPF.MVVM.View
             if (!MainContext.UserVM.CurrentUserIsModerator()) return;
             if (sender is DataGrid dataGrid && dataGrid.SelectedItem != null)
             {
-                MainContext.AlcoholVM.AlcocholEditSelectedSubPageCommand.Execute(this);
+                //MainContext.AlcoholVM.AlcocholEditSelectedSubPageCommand.Execute(this);
             }
         }
     }

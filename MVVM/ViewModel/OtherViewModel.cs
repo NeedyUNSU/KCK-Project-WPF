@@ -1,14 +1,183 @@
 ﻿using KCK_Project_WPF.MVVM.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using KCK_Project_WPF.MVVM.Core;
+using System.Windows.Input;
+using System.Windows;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace KCK_Project_WPF.MVVM.ViewModel
 {
-    public class OtherViewModel
+    public class OtherViewModel : BaseViewModel
     {
         private const string FilePath = "others.xml";
         private List<OtherModel> _others;
 
+        private ObservableCollection<OtherModel> ohtersCache;
+
+        public ObservableCollection<OtherModel> OthersCache
+        {
+            get { return ohtersCache; }
+            set { ohtersCache = value; OnPropertyChanged(); }
+        }
+
+        private OtherModel otherSelected;
+
+        public OtherModel OtherSelected
+        {
+            get { return otherSelected; }
+            set
+            {
+                otherSelected = value;
+                OnPropertyChanged(nameof(otherSelected));
+                OnPropertyChanged(nameof(IsButtonEnabled));
+            }
+        }
+
+        public bool IsButtonEnabled => OtherSelected != null;
+
+        private double maxHeight = 230;
+
+        public double MaxHeight
+        {
+            get { return maxHeight; }
+            set { maxHeight = value; OnPropertyChanged(); }
+        }
+
+        public void UpdateMaxHeight()
+        {
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            MaxHeight = mainWindow.Height - 180;
+        }
+
+        public void UpdateMaxHeight(int size)
+        {
+            MaxHeight = size - 180;
+        }
+
+        private bool userIsModerator = false;
+
+        public bool UserIsModerator
+        {
+            get { return userIsModerator; }
+            set { userIsModerator = value; OnPropertyChanged(); }
+        }
+
+        private bool searchMenu = false;
+
+        public bool SearchMenu
+        {
+            get { return searchMenu; }
+            set { searchMenu = value; OnPropertyChanged(); }
+        }
+
+        public ICommand OpenFiltersSubPageCommand { get; set; }
+
+        private List<string> orderType;
+
+        public List<string> OrderType
+        {
+            get { return orderType; }
+            set { orderType = value; OnPropertyChanged(); }
+        }
+
+        private string orderTypeValue;
+
+        public string OrderTypeValue
+        {
+            get { return orderTypeValue; }
+            set { orderTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> orderBy;
+
+        public List<string> OrderBy
+        {
+            get { return orderBy; }
+            set { orderBy = value; OnPropertyChanged(); }
+        }
+
+        private string orderByValue;
+
+        public string OrderByValue
+        {
+            get { return orderByValue; }
+            set { orderByValue = value; OnPropertyChanged(); }
+        }
+
+        private string searchString;
+
+        public string SearchString
+        {
+            get { return searchString; }
+            set { searchString = value; OnPropertyChanged(); }
+        }
+
+        private List<string> searchDataType;
+
+        public List<string> SearchDataType
+        {
+            get { return searchDataType; }
+            set { searchDataType = value; OnPropertyChanged(); }
+        }
+
+        private string searchDataTypeValue;
+
+        public string SearchDataTypeValue
+        {
+            get { return searchDataTypeValue; }
+            set { searchDataTypeValue = value; OnPropertyChanged(); }
+        }
+
+        private List<string> searchByType;
+
+        public List<string> SearchByType
+        {
+            get { return searchByType; }
+            set { searchByType = value; OnPropertyChanged(); }
+        }
+
+        private string searchByTypeValue;
+
+        public string SearchByTypeValue
+        {
+            get { return searchByTypeValue; }
+            set { searchByTypeValue = value; OnPropertyChanged(); }
+        }
+
+        public ICommand RestartFiltersSubPageCommand { get; set; }
+        public ICommand UpdateFiltersReloadCommand { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public OtherViewModel()
         {
+            #region Adding And Loading
             _others = Load();
             Add(new OtherModel("Limonka", "Kwaśny owoc.", "Bogata w witaminę C", "Dostępna w supermarketach", "Owoc"));
             Add(new OtherModel("Mięta", "Świeże liście mięty.", "Orzeźwiająca", "Dostępna w sklepach ogrodniczych", "Zioło"));
@@ -33,6 +202,31 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 Add(new OtherModel($"Ingredient_type_other{i}", "test.", "test.", "test.", "test"));
             }
             Save();
+            #endregion
+
+            OthersCache = new(GetAll());
+
+
+
+
+
+            OpenFiltersSubPageCommand = new RelayCommand(o => 
+            {
+                if (SearchMenu)
+                {
+                    SearchMenu = false;
+                }
+                else
+                {
+                    SearchMenu = true;
+                }
+
+            });
+
+
+
+
+
         }
 
         public List<OtherModel> Load()
