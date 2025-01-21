@@ -49,18 +49,18 @@
                         <DataGridTextColumn Header="Opis" Binding="{Binding Description}" Width="1.5*" 
                             IsReadOnly="True" 
                             ElementStyle="{StaticResource NonEditableTextStyle}" />
-                        <DataGridTextColumn Header="Typ szkła" Binding="{Binding GlassType}" Width="0.7*" 
+                        <DataGridTextColumn Header="Typ szkła" Binding="{Binding GlassType}" Width="0.4*" 
                             IsReadOnly="True" 
                             ElementStyle="{StaticResource NonEditableTextStyle}" />
-                        <DataGridTextColumn Header="Metoda przygotowania" Binding="{Binding PreparationMethod}" Width="0.7*" 
+                        <DataGridTextColumn Header="Metoda przygotowania" Binding="{Binding PreparationMethod}" Width="1.5*" 
                             IsReadOnly="True" 
                             ElementStyle="{StaticResource NonEditableTextStyle}" />
-                        <DataGridTextColumn Header="Ocena" Binding="{Binding Rating}" Width="0.5*" 
+                        <DataGridTextColumn Header="Ocena" Binding="{Binding Rating}" Width="0.2*" 
                             IsReadOnly="True" 
                             ElementStyle="{StaticResource NonEditableTextStyle}">
 
                         </DataGridTextColumn>
-                        <DataGridTemplateColumn Header="Alkohol" Width="2*">
+                        <DataGridTemplateColumn Header="Alkohol" Width="0.7*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
@@ -75,7 +75,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Inne składniki" Width="2*">
+                        <DataGridTemplateColumn Header="Inne składniki" Width="0.7*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>

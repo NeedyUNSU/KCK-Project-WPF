@@ -21,6 +21,7 @@
                         Visibility="{Binding UserLoggedIn, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
                 <Button Content="Wyloguj" Command="{Binding LogoutCommand}" Margin="10"
                         Visibility="{Binding UserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Button Content="Przełącz tryb na konsolę" Margin="10" Click="Button_Click"/>
                 <Button Content="Wyjdź z aplikacji" Command="{Binding TurnOffApp}" Margin="10"/>
             </StackPanel>
         </DockPanel>

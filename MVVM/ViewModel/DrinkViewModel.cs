@@ -299,9 +299,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public bool IsButtonEnabled => DrinkSelected != null;
 
-
-
-
         private ObservableCollection<DrinkModel> drinksCache;
 
         public ObservableCollection<DrinkModel> DrinksCache
@@ -802,11 +799,13 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             BackToMenu = new RelayCommand(o =>
             {
                 DisplayMenuNumber();
+                DrinkSelected = null;
             });
 
             BackToMainMenu = new RelayCommand(o =>
             {
                 DisplayMenuNumber();
+                DrinkSelected = null;
 
                 MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel)
@@ -901,7 +900,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             {
                 return File.ReadAllLines(GlassTypesFile).Where(line => !string.IsNullOrWhiteSpace(line)).ToList().Concat(rodzajeSzklanek).Distinct().ToList();
             }
-            catch (Exception ex)
+            catch
             {
                 return rodzajeSzklanek;
             }

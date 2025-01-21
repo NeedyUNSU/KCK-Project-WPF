@@ -1,12 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>KCK_Project_WPF</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWPF>true</UseWPF>
+    <GenerateEntryPoint>false</GenerateEntryPoint>
+    <MainEntryPoint>KCK_Project_WPF.MVVM.Core.Program</MainEntryPoint>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="MVVM\View\ConsoleView\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    <PackageReference Include="Spectre.Console.ImageSharp" Version="0.49.1" />
+  </ItemGroup>
+  
 </Project>

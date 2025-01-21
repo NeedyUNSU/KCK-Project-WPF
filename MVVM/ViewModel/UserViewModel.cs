@@ -344,7 +344,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { adminAddUserType = value; OnPropertyChanged(); }
         }
 
-        private UserModel adminSelectedUserSave;
         private UserModel adminSelectedUser;
         public UserModel AdminSelectedUser
         {
@@ -418,6 +417,10 @@ namespace KCK_Project_WPF.MVVM.ViewModel
 
         public ICommand UserViewModelUnknownCommand { get; set; }
 
+        public ICommand GoToDrinksCommand { get; set; }
+        public ICommand GoToIngrediensCommand { get; set; }
+        public ICommand GoToAlkoholCommand { get; set; }
+
         private MainWindowViewModel MainContext
         {
             get
@@ -433,16 +436,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 }
             }
         }
-
-
-
-        //private bool[] menuAppear = { false, true, false, false, false, false, false, false, false, false };
-
-        //public bool[] MenuAppear
-        //{
-        //    get { return menuAppear; }
-        //    set { menuAppear = value; OnPropertyChanged(); }
-        //}
 
         public UserViewModel()
         {
@@ -499,7 +492,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                 else
                 {
                     var index = Array.IndexOf(menuAppear, true);
-                   // MessageBox.Show(index.ToString(), index.ToString());
                     if (index > 1 && index <= 3)
                     {
                         DisplayMenuNumber(1);
@@ -508,6 +500,26 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     MainContext.CurrentView = null;
                 }
             });
+
+            GoToDrinksCommand = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+                MainContext.ShowDrinkMenuCommand.Execute(this);
+            });
+
+            GoToIngrediensCommand = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+                MainContext.ShowOtherMenuCommand.Execute(this);
+            });
+
+            GoToAlkoholCommand = new RelayCommand(o =>
+            {
+                DisplayMenuNumber();
+                MainContext.ShowAlcoholMenuCommand.Execute(this);
+            });
+
+
 
             BackToMainMenu = new RelayCommand(o =>
             {
@@ -581,12 +593,6 @@ namespace KCK_Project_WPF.MVVM.ViewModel
                     MessageBox.Show("Email nie jest w poprawnym formacie spróbuj np. xx@xx.xx", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
-
-                //if(!IsGoodPassword(loginPasswd))
-                //{
-                //    MessageBox.Show("Hasło musi zawierać minimalnie jedną dużą literę, jedną małą, znak specjalny oraz cyfrę", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
-                //    return;
-                //}
 
                 if (Login(LoginEmail, LoginPassword) == 0)
                 {

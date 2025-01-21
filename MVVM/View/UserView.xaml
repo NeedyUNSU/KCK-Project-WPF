@@ -20,7 +20,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding MenuAppear[1], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Logowanie 1" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Logowanie" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -51,7 +51,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[2], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Rejestracja 2" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Rejestracja" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -99,7 +99,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[3], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Zapomniałem hasła 3" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Zapomniałem hasła" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -130,7 +130,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[4], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Profil użytkownika 4" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Profil użytkownika" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <TextBlock Text="{Binding ProfileUsername}" FontWeight="Bold" FontSize="25" Margin="0,0,0,20" HorizontalAlignment="Center" />
             <Label Content="E-mail:"/>
             <TextBlock Text="{Binding ProfileEmail}" FontWeight="Bold" FontSize="19" Margin="0,0,0,20" />
@@ -141,7 +141,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" Visibility="{Binding MenuAppear[5], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Modyfikuj swoje dane 5" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Modyfikuj swoje dane" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <TextBlock Text="Jeśli zmienisz jakieś dane, zatwierdź zmiany przyciskiem poniżej formularza. 👤" FontWeight="Light" FontSize="12" Margin="0,0,0,20" />
 
             <Grid>
@@ -217,7 +217,7 @@
         </StackPanel>
 
         <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding MenuAppear[6], Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Menu Moderatora 6" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+            <TextBlock Text="Menu Moderatora" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -238,7 +238,7 @@
                         <Label Content="* Usuń drinka" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
-                <Button Content="Zarządzaj Drinkami" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
+                <Button Content="Zarządzaj Drinkami" Grid.Row="1" Command="{Binding GoToDrinksCommand}" Margin="10,0,10,0"/>
 
                 <Border Grid.Column="1" BorderThickness="1px" BorderBrush="Black" Margin="10,10,10,10">
                     <StackPanel>
@@ -250,7 +250,7 @@
                         <Label Content="* Usuń typ składnika" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
-                <Button Content="Zarządzaj Składnikami" Grid.Column="1" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
+                <Button Content="Zarządzaj Składnikami" Grid.Column="1" Grid.Row="1" Command="{Binding GoToIngrediensCommand}" Margin="10,0,10,0"/>
 
                 <Border Grid.Column="2" BorderThickness="1px" BorderBrush="Black" Margin="10,10,10,10">
                     <StackPanel>
@@ -263,7 +263,7 @@
                         <Label Content="* Usuń typ alkoholu" FontSize="10" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Border>
-                <Button Content="Zarządzaj Alkocholem" Grid.Column="2" Grid.Row="1" Command="{Binding BackToMenu}" Margin="10,0,10,0"/>
+                <Button Content="Zarządzaj Alkocholem" Grid.Column="2" Grid.Row="1" Command="{Binding GoToAlkoholCommand}" Margin="10,0,10,0"/>
             </Grid>
             <Button Content="Powrót" Command="{Binding BackToMenu}" Margin="0,15,0,15"/>
         </StackPanel>
@@ -278,7 +278,7 @@
                         <ColumnDefinition Width="0.5*"/>
                         <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Menu Administratora 7" Grid.Column="0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
+                    <TextBlock Text="Menu Administratora" Grid.Column="0" FontWeight="Bold" FontSize="20" Margin="0,20,0,20" />
 
                     <Button Content="Filtry" Grid.Column="2" Command="{Binding AdminOpenFiltersSubPageCommand}" Margin="10,20,0,20"/>
                     <Button Content="Dodaj użytkownika" Grid.Column="3" Command="{Binding AdminAddUserSubPageCommand}" Margin="10,20,0,20"/>

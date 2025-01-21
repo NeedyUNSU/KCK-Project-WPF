@@ -5,6 +5,8 @@
              xmlns:viewModel="clr-namespace:KCK_Project_WPF.MVVM.ViewModel"
              xmlns:view="clr-namespace:KCK_Project_WPF.MVVM.View"
              StartupUri="MainWindow.xaml">
+
+    <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
