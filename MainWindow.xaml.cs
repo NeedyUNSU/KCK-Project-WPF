@@ -44,6 +44,7 @@ namespace KCK_Project_WPF
 
         public MainWindow()
         {
+            ConsoleManager.HideConsole();
             this.DataContext = new MainWindowViewModel();
             InitializeComponent();
             this.StateChanged += MainWindow_StateChanged;
@@ -109,6 +110,7 @@ namespace KCK_Project_WPF
             Console.SetWindowSize(WidthConsole, HeightConsole);
 
             ConsoleMenu();
+            MainContext.UserLoggedIn = _userVM.CurrentUserIsLogged();
 
             ConsoleManager.HideConsole(); // return 0;
 

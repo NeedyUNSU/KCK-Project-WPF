@@ -29,7 +29,7 @@ namespace KCK_Project_WPF.MVVM.ViewModel
             set { loginEmail = value; OnPropertyChanged(); }
         }
 
-        private string loginPasswd = "!QAZ2wsx";
+        private string loginPasswd = "adm123";
 
         public string LoginPassword
         {
